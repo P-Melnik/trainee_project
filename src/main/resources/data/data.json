@@ -1,0 +1,25 @@
+[
+  {
+    "type": "Trainee",
+    "id": "1",
+    "userId": "1",
+    "firstName": "Jack",
+    "lastName": "Morrison",
+    "userName": "Jack.Morrison",
+    "isActive": true,
+    "password": "pass123098",
+    "dateOfBirth": "1995-09-13",
+    "address": "12 P. Asl"
+  },
+  {
+    "type": "Trainer",
+    "id": "1",
+    "userId": "2",
+    "firstName": "John",
+    "lastName": "Jacobson",
+    "userName": "John.Jacobson",
+    "isActive": true,
+    "specialization": "1",
+    "password": "pP10109910"
+  }
+]
