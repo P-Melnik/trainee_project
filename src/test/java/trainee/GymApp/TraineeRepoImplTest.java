@@ -39,33 +39,33 @@ public class TraineeRepoImplTest {
         long id = 1;
         Trainee expectedTrainee = new Trainee();
 
-        when(storage.findById("trainee", id)).thenReturn(expectedTrainee);
+        when(storage.findById(Trainee.class, id)).thenReturn(expectedTrainee);
 
         Trainee foundTrainee = traineeRepo.findById(id);
 
         Assertions.assertEquals(expectedTrainee, foundTrainee);
-        verify(storage, times(1)).findById("trainee", id);
+        verify(storage, times(1)).findById(Trainee.class, id);
     }
 
     @Test
     public void testFindAllByType() {
-        List<Object> objList = Arrays.asList(
+        List<Trainee> objList = Arrays.asList(
                 new Trainee(),
                 new Trainee()
         );
-        when(storage.findAllByType("trainee")).thenReturn(objList);
+        when(storage.findAll(Trainee.class)).thenReturn(objList);
 
-        List<Trainee> traineeList = traineeRepo.findAllByType();
+        List<Trainee> traineeList = traineeRepo.findAll();
 
         Assertions.assertEquals(objList.size(), traineeList.size());
-        verify(storage, times(1)).findAllByType("trainee");
+        verify(storage, times(1)).findAll(Trainee.class);
     }
 
     @Test
     public void updateTest() {
         Trainee trainee = new Trainee();
 
-        traineeRepo.updateTrainee(trainee);
+        traineeRepo.update(trainee);
 
         verify(storage, times(1)).update(trainee);
     }
@@ -74,9 +74,9 @@ public class TraineeRepoImplTest {
     public void deleteTest() {
         long traineeId = 1;
 
-        traineeRepo.deleteById(traineeId);
+        traineeRepo.delete(traineeId);
 
-        verify(storage, times(1)).delete("trainee", traineeId);
+        verify(storage, times(1)).delete(Trainee.class, traineeId);
     }
 
 }

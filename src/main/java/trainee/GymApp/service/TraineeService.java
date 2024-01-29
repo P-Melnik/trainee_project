@@ -17,5 +17,4 @@ public interface TraineeService {
 
     void deleteTraineeById(long traineeId);
 
-
 }

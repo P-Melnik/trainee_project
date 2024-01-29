@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TrainingRepo;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Training;
-import trainee.GymApp.service.Generators;
 import trainee.GymApp.service.TrainingService;
 
 import java.util.List;
@@ -27,19 +26,18 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public void createTraining(TrainingDTO trainingDTO) {
         log.info("Creating training: " + trainingDTO);
-        Training training = new Training();
-        training.setId(Generators.generateTrainingId());
-        training.setTrainingDate(trainingDTO.getTrainingDate());
-        training.setTrainingName(trainingDTO.getTrainingName());
-        training.setTrainingDuration(trainingDTO.getTrainingDuration());
-        training.setTrainingTypeId(trainingDTO.getTrainingType());
-        training.setTrainerId(trainingDTO.getTrainerId());
-        training.setTraineeId(trainingDTO.getTraineeId());
+        Training training = new Training(0L,
+                trainingDTO.getTraineeId(),
+                trainingDTO.getTrainerId(),
+                trainingDTO.getTrainingName(),
+                trainingDTO.getTrainingType(),
+                trainingDTO.getTrainingDate(),
+                trainingDTO.getTrainingDuration());
         trainingRepo.create(training);
     }
 
     public List<Training> findAll() {
         log.debug("Fetching all trainings");
-        return trainingRepo.findAllByType();
+        return trainingRepo.findAll();
     }
 }

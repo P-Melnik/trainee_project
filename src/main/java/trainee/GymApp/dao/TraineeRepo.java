@@ -2,10 +2,10 @@ package trainee.GymApp.dao;
 
 import trainee.GymApp.entity.Trainee;
 
-public interface TraineeRepo extends AbstractRepo<Trainee> {
+public interface TraineeRepo extends Repo<Trainee> {
 
-    void updateTrainee(Trainee trainee);
+    void update(Trainee trainee);
 
-    void deleteById(long id);
+    void delete(long id);
 
 }

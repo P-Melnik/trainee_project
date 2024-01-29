@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
-import trainee.GymApp.service.Generators;
+import trainee.GymApp.entity.User;
+import trainee.GymApp.service.UserUtil;
 import trainee.GymApp.service.TraineeService;
 
 import java.util.List;
@@ -27,34 +28,32 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void createTrainee(TraineeDTO traineeDTO) {
         log.info("Creating trainee: " + traineeDTO);
-        Trainee trainee = new Trainee();
-        trainee.setId(Generators.generateTraineeId());
-        trainee.setActive(traineeDTO.isActive());
-        trainee.setAddress(traineeDTO.getAddress());
-        trainee.setDateOfBirth(traineeDTO.getDateOfBirth());
-        trainee.setUserId(Generators.generateUserId());
-        trainee.setFirstName(traineeDTO.getFirstName());
-        trainee.setLastName(traineeDTO.getLastName());
-        trainee.setPassword(Generators.generatePassword());
-        trainee.setUserName(Generators.generateUserName(trainee.getFirstName(),
-                trainee.getLastName()));
+        User user = new User(0L, traineeDTO.getFirstName(),
+                traineeDTO.getLastName(),
+                UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()),
+                UserUtil.generatePassword(),
+                traineeDTO.isActive());
+        Trainee trainee = new Trainee(0L,
+                traineeDTO.getDateOfBirth(),
+                traineeDTO.getAddress(),
+                user);
         traineeRepo.create(trainee);
     }
 
     @Override
     public void updateTrainee(Trainee trainee) {
         log.info("Updating trainee: " + trainee);
-        traineeRepo.updateTrainee(trainee);
+        traineeRepo.update(trainee);
     }
 
     @Override
     public void deleteTraineeById(long traineeId) {
         log.info("Deleting trainee:" + traineeId);
-        traineeRepo.deleteById(traineeId);
+        traineeRepo.delete(traineeId);
     }
 
     public List<Trainee> findAll() {
         log.debug("Fetching all trainees");
-        return traineeRepo.findAllByType();
+        return traineeRepo.findAll();
     }
 }

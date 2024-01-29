@@ -58,7 +58,7 @@ public class TrainerServiceImplTest {
 
         trainerService.updateTrainer(trainer);
 
-        verify(trainerRepo, times(1)).updateTrainer(trainer);
+        verify(trainerRepo, times(1)).update(trainer);
     }
 
     @Test
@@ -67,11 +67,11 @@ public class TrainerServiceImplTest {
                 new Trainer(),
                 new Trainer()
         );
-        when(trainerRepo.findAllByType()).thenReturn(expectedTrainers);
+        when(trainerRepo.findAll()).thenReturn(expectedTrainers);
 
         List<Trainer> actualTrainers = trainerService.findAll();
 
         Assertions.assertEquals(expectedTrainers.size(), actualTrainers.size());
-        verify(trainerRepo, times(1)).findAllByType();
+        verify(trainerRepo, times(1)).findAll();
     }
 }

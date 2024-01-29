@@ -24,11 +24,10 @@ public class StorageTest {
         long id = 1;
         Trainee trainee = new Trainee();
         trainee.setId(id);
-        String TYPE = "trainee";
 
         storage.save(trainee);
 
-        Trainee founded = (Trainee) storage.findById(TYPE, id);
+        Trainee founded = storage.findById(Trainee.class, id);
         Assertions.assertEquals(trainee, founded);
     }
 
@@ -54,7 +53,7 @@ public class StorageTest {
 
         Trainee updated = new Trainee();
         updated.setId(id);
-        updated.setLastName("lastName");
+        updated.setAddress("address");
         storage.update(updated);
 
         Map<String, Object> map = storage.getStorage();
@@ -79,11 +78,10 @@ public class StorageTest {
     public void testDelete() {
         long id = 1;
         Trainee trainee = new Trainee();
-        String TYPE = "trainee";
         trainee.setId(id);
         storage.save(trainee);
 
-        storage.delete(TYPE, id);
+        storage.delete(Trainee.class, id);
 
         Map<String, Object> map = storage.getStorage();
 
@@ -94,12 +92,11 @@ public class StorageTest {
     public void testDeleteNotFound() {
         long id = 1;
         Trainee trainee = new Trainee();
-        String TYPE = "trainee";
         trainee.setId(id);
 
         storage.save(trainee);
 
-        storage.delete(TYPE, 2);
+        storage.delete(Trainee.class, 2);
 
         Map<String, Object> map = storage.getStorage();
         Assertions.assertEquals(1, map.size());

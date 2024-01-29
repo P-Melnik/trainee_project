@@ -8,20 +8,23 @@ import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.storage.Storage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 public class TrainerRepoImpl implements TrainerRepo {
 
-    private Storage storage;
+    private final Storage storage;
 
     @Autowired
     public TrainerRepoImpl(Storage storage) {
         this.storage = storage;
     }
 
-    private final String TYPE = "trainer";
+    @Override
+    public void update(Trainer trainer) {
+        log.debug("Updating Trainer: " + trainer);
+        storage.update(trainer);
+    }
 
     @Override
     public void create(Trainer trainer) {
@@ -32,22 +35,18 @@ public class TrainerRepoImpl implements TrainerRepo {
     @Override
     public Trainer findById(long id) {
         log.debug("Find trainer by id trainer:" + id);
-        return (Trainer) storage.findById(TYPE, id);
+        return storage.findById(Trainer.class, id);
     }
 
     @Override
-    public List<Trainer> findAllByType() {
+    public List<Trainer> findAll() {
         log.debug("Fetching all Trainers");
-        List<Object> objList = storage.findAllByType(TYPE);
-        return objList.stream()
-                .map(obj -> (Trainer) obj)
-                .collect(Collectors.toList());
+        return storage.findAll(Trainer.class);
     }
 
     @Override
-    public void updateTrainer(Trainer trainer) {
-        log.debug("Updating Trainer: " + trainer);
-        storage.update(trainer);
+    public void delete(long id) {
+        log.warn("Trying to delete trainer profile");
     }
 
 }

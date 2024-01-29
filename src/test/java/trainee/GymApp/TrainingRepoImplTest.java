@@ -39,25 +39,25 @@ public class TrainingRepoImplTest {
     void testFindById() {
         long trainingId = 1;
         Training expectedTraining = new Training();
-        when(storage.findById("training", trainingId)).thenReturn(expectedTraining);
+        when(storage.findById(Training.class, trainingId)).thenReturn(expectedTraining);
 
         Training actualTraining = trainingRepo.findById(trainingId);
 
         Assertions.assertEquals(expectedTraining, actualTraining);
-        verify(storage, times(1)).findById("training", trainingId);
+        verify(storage, times(1)).findById(Training.class, trainingId);
     }
 
     @Test
     void testFindAllByType() {
-        List<Object> objList = Arrays.asList(
+        List<Training> objList = Arrays.asList(
                 new Training(),
                 new Training()
         );
-        when(storage.findAllByType("training")).thenReturn(objList);
+        when(storage.findAll(Training.class)).thenReturn(objList);
 
-        List<Training> trainingList = trainingRepo.findAllByType();
+        List<Training> trainingList = trainingRepo.findAll();
 
         Assertions.assertEquals(objList.size(), trainingList.size());
-        verify(storage, times(1)).findAllByType("training");
+        verify(storage, times(1)).findAll(Training.class);
     }
 }

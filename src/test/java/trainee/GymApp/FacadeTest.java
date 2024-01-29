@@ -43,7 +43,7 @@ public class FacadeTest {
         Trainee expectedTrainee = new Trainee();
         when(traineeService.getTraineeById(traineeId)).thenReturn(expectedTrainee);
 
-        Trainee actualTrainee = facade.getTraineeById(traineeId);
+        Trainee actualTrainee = facade.getTrainee(traineeId);
 
         Assertions.assertEquals(expectedTrainee, actualTrainee);
         verify(traineeService, times(1)).getTraineeById(traineeId);
@@ -55,7 +55,7 @@ public class FacadeTest {
         Trainer expectedTrainer = new Trainer();
         when(trainerService.getTrainerById(trainerId)).thenReturn(expectedTrainer);
 
-        Trainer actualTrainer = facade.getTrainerById(trainerId);
+        Trainer actualTrainer = facade.getTrainer(trainerId);
 
         Assertions.assertEquals(expectedTrainer, actualTrainer);
         verify(trainerService, times(1)).getTrainerById(trainerId);
@@ -67,7 +67,7 @@ public class FacadeTest {
         Training expectedTraining = new Training();
         when(trainingService.getTrainingById(trainingId)).thenReturn(expectedTraining);
 
-        Training actualTraining = facade.getTrainingById(trainingId);
+        Training actualTraining = facade.getTraining(trainingId);
 
         Assertions.assertEquals(expectedTraining, actualTraining);
         verify(trainingService, times(1)).getTrainingById(trainingId);

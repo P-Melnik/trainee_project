@@ -4,16 +4,16 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.storage.Storage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 @NoArgsConstructor
-public class TraineeRepoImpl implements trainee.GymApp.dao.TraineeRepo {
+public class TraineeRepoImpl implements TraineeRepo {
 
     private Storage storage;
 
@@ -22,7 +22,11 @@ public class TraineeRepoImpl implements trainee.GymApp.dao.TraineeRepo {
         this.storage = storage;
     }
 
-    private final String TYPE = "trainee";
+    @Override
+    public void update(Trainee trainee) {
+        log.debug("Updating Trainee: " + trainee);
+        storage.update(trainee);
+    }
 
     @Override
     public void create(Trainee trainee) {
@@ -33,27 +37,18 @@ public class TraineeRepoImpl implements trainee.GymApp.dao.TraineeRepo {
     @Override
     public Trainee findById(long id) {
         log.debug("Find trainee by id trainee:" + id);
-        return (Trainee) storage.findById(TYPE, id);
+        return storage.findById(Trainee.class, id);
     }
 
     @Override
-    public List<Trainee> findAllByType() {
+    public List<Trainee> findAll() {
         log.debug("Fetching all Trainees");
-        List<Object> objList = storage.findAllByType(TYPE);
-        return objList.stream()
-                .map(obj -> (Trainee) obj)
-                .collect(Collectors.toList());
+        return storage.findAll(Trainee.class);
     }
 
     @Override
-    public void updateTrainee(Trainee trainee) {
-        log.debug("Updating Trainee: " + trainee);
-        storage.update(trainee);
-    }
-
-    @Override
-    public void deleteById(long id) {
+    public void delete(long id) {
         log.debug("Deleting Trainee by id trainee:" + id);
-        storage.delete(TYPE, id);
+        storage.delete(Trainee.class, id);
     }
 }

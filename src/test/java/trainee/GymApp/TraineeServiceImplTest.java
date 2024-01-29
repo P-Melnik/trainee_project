@@ -57,7 +57,7 @@ public class TraineeServiceImplTest {
 
         traineeService.updateTrainee(trainee);
 
-        verify(traineeRepo, times(1)).updateTrainee(trainee);
+        verify(traineeRepo, times(1)).update(trainee);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TraineeServiceImplTest {
 
         traineeService.deleteTraineeById(traineeId);
 
-        verify(traineeRepo, times(1)).deleteById(traineeId);
+        verify(traineeRepo, times(1)).delete(traineeId);
     }
 
     @Test
@@ -75,11 +75,11 @@ public class TraineeServiceImplTest {
                 new Trainee(),
                 new Trainee()
         );
-        when(traineeRepo.findAllByType()).thenReturn(expectedTrainees);
+        when(traineeRepo.findAll()).thenReturn(expectedTrainees);
 
         List<Trainee> actualTrainees = traineeService.findAll();
 
         Assertions.assertEquals(expectedTrainees.size(), actualTrainees.size());
-        verify(traineeRepo, times(1)).findAllByType();
+        verify(traineeRepo, times(1)).findAll();
     }
 }

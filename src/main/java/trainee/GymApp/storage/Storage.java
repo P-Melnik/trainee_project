@@ -2,11 +2,9 @@ package trainee.GymApp.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import trainee.GymApp.entity.Trainee;
-import trainee.GymApp.entity.Trainer;
-import trainee.GymApp.entity.Training;
-import trainee.GymApp.entity.TrainingType;
+import trainee.GymApp.entity.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,84 +14,135 @@ import java.util.stream.Collectors;
 @Component
 public class Storage {
 
-    private Map<String, Object> storage = new ConcurrentHashMap<>();
+    private final Map<String, Object> storage = new ConcurrentHashMap<>();
+
+    private static final Map<Object, String> mapInst = new HashMap<>();
+
+    static {
+        mapInst.put(Trainee.class, "trainee");
+        mapInst.put(Trainer.class, "trainer");
+        mapInst.put(Training.class, "training");
+        mapInst.put(TrainingType.class, "trainingType");
+        mapInst.put(User.class, "user");
+    }
+
+    IdGenerator traineeIdGenerator = new IdGenerator();
+    IdGenerator trainerIdGenerator = new IdGenerator();
+    IdGenerator traininigIdGenerator = new IdGenerator();
+    IdGenerator traininigTypeIdGenerator = new IdGenerator();
+    IdGenerator userIdGenerator = new IdGenerator();
 
     public Map<String, Object> getStorage() {
         return storage;
     }
 
     public void save(Object o) {
-        if (o instanceof Trainee) {
-            storage.put("trainee:" + ((Trainee) o).getId(), o);
-            log.info("Saved Trainee with key: {}", "trainee:" + ((Trainee) o).getId());
-        } else if (o instanceof Trainer) {
-            storage.put("trainer:" + ((Trainer) o).getId(), o);
-            log.info("Saved Trainer with key: {}", "trainer:" + ((Trainer) o).getId());
-        } else if (o instanceof Training) {
-            storage.put("training:" + ((Training) o).getId(), o);
-            log.info("Saved Training with key: {}", "training:" + ((Training) o).getId());
-        } else if (o instanceof TrainingType) {
-            storage.put("trainingType:" + ((TrainingType) o).getId(), o);
-            log.info("Saved TrainingType with key: {}", "trainingType:" + ((TrainingType) o).getId());
-        }
-
-    }
-
-    public List<Object> findAllByType(String type) {
-        List<Object> result = storage.entrySet().stream()
-                .filter(entry -> entry.getKey().contains(type))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-        log.info("Found {} objects of type: {}", result.size(), type);
-        return result;
-    }
-
-    public Object findById(String type, long id) {
-        String keyToFind = type + ":" + id;
-        if (storage.containsKey(keyToFind)) {
-            log.info("Found object with key: {}", keyToFind);
-            return storage.get(keyToFind);
+        String type = mapInst.get(o.getClass());
+        if (type != null) {
+            long id = getId(o);
+            IdGenerator generator = getIdGenerator(o);
+            if (id != 0) {
+                assert generator != null;
+                generator.getGeneratedId();
+            } else {
+                if (o instanceof Identifiable) {
+                    assert generator != null;
+                    setId((Identifiable) o, generator);
+                }
+            }
+            String key = generateKey(type, getId(o));
+            storage.put(key, o);
+            log.info("Saved {} with key: {}", o.getClass().getSimpleName(), key);
         } else {
-            log.warn("Object not found with key: {}", keyToFind);
-            return null;
+            log.warn("No entity type found for class: {}", o.getClass());
         }
     }
 
     public void update(Object o) {
-        if (o instanceof Trainee) {
-            if (storage.containsKey("trainee:" + ((Trainee) o).getId())) {
-                storage.put("trainee:" + ((Trainee) o).getId(), o);
-                log.info("Updated Trainee with key: {}", "trainee:" + ((Trainee) o).getId());
+        String type = mapInst.get(o.getClass());
+        if (type != null) {
+            long id = getId(o);
+            String key = generateKey(type, id);
+
+            if (storage.containsKey(key)) {
+                storage.put(key, o);
+                log.info("Updated {} with key: {}", o.getClass().getSimpleName(), key);
             } else {
-                log.warn("Trainee not found with key: {}", "trainee:" + ((Trainee) o).getId());
-            }
-        } else if (o instanceof Trainer) {
-            if (storage.containsKey("trainer:" + ((Trainer) o).getId())) {
-                storage.put("trainer:" + ((Trainer) o).getId(), o);
-                log.info("Updated Trainer with key: {}", "trainer:" + ((Trainer) o).getId());
-            } else {
-                log.warn("Trainer not found with key: {}", "trainer:" + ((Trainer) o).getId());
-            }
-        } else if (o instanceof Training) {
-            if (storage.containsKey("training:" + ((Training) o).getId())) {
-                storage.put("training:" + ((Training) o).getId(), o);
-                log.info("Updated Training with key: {}", "training:" + ((Training) o).getId());
-            } else {
-                log.warn("Training not found with key: {}", "training:" + ((Training) o).getId());
+                log.warn("{} not found with key: {}", o.getClass().getSimpleName(), key);
             }
         } else {
             log.warn("Unsupported object type for update");
         }
     }
 
-    public void delete(String type, long id) {
-        String keyToFind = type + ":" + id;
-        if (storage.containsKey(keyToFind)) {
-            storage.remove(keyToFind);
-            log.info("Deleted object with key: {}", keyToFind);
+    public <T extends Identifiable> T findById(Class<T> entityType, long id) {
+        String type = mapInst.get(entityType);
+        if (type != null) {
+            String key = generateKey(type, id);
+            return entityType.cast(storage.get(key));
         } else {
-            log.warn("Object not found for deletion with key: {}", keyToFind);
+            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+            return null;
         }
     }
 
+    public <T extends Identifiable> List<T> findAll(Class<T> entityType) {
+        String type = mapInst.get(entityType);
+        if (type != null) {
+            return storage.values().stream()
+                    .filter(entityType::isInstance)
+                    .map(entityType::cast)
+                    .collect(Collectors.toList());
+        } else {
+            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+            return List.of();
+        }
+    }
+
+    public <T extends Identifiable> void delete(Class<T> entityType, long id) {
+        String type = mapInst.get(entityType);
+        if (type != null) {
+            String key = generateKey(type, id);
+            if (storage.containsKey(key)) {
+                storage.remove(key);
+                log.info("Deleted {} with key: {}", type, key);
+            } else {
+                log.warn("{} not found for deletion with key: {}", type, key);
+            }
+        } else {
+            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+        }
+    }
+
+
+    private String generateKey(String type, long id) {
+        return type + ":" + id;
+    }
+
+    private long getId(Object o) {
+        if (o instanceof Identifiable) {
+            return ((Identifiable) o).getId();
+        }
+        return 0L;
+    }
+
+    private void setId(Identifiable identifiable, IdGenerator idGenerator) {
+        long id = idGenerator.getGeneratedId();
+        identifiable.setId(id);
+    }
+
+    private IdGenerator getIdGenerator(Object o) {
+        if (o instanceof Trainee) {
+            return traineeIdGenerator;
+        } else if (o instanceof Trainer) {
+            return trainerIdGenerator;
+        } else if (o instanceof Training) {
+            return traininigIdGenerator;
+        } else if (o instanceof TrainingType) {
+            return traininigTypeIdGenerator;
+        } else if (o instanceof User) {
+            return userIdGenerator;
+        }
+        return null;
+    }
 }

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.Trainer;
-import trainee.GymApp.service.Generators;
+import trainee.GymApp.entity.User;
+import trainee.GymApp.service.UserUtil;
 import trainee.GymApp.service.TrainerService;
 
 import java.util.List;
@@ -28,27 +29,23 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public void createTrainer(TrainerDTO trainerDTO) {
         log.info("Creating trainer: " + trainerDTO);
-        Trainer trainer = new Trainer();
-        trainer.setId(Generators.generateTrainerId());
-        trainer.setActive(trainerDTO.isActive());
-        trainer.setFirstName(trainerDTO.getFirstName());
-        trainer.setLastName(trainerDTO.getLastName());
-        trainer.setUserId(Generators.generateUserId());
-        trainer.setSpecialization(trainerDTO.getSpecialization());
-        trainer.setPassword(Generators.generatePassword());
-        trainer.setUserName(Generators.generateUserName(trainer.getFirstName(),
-                trainer.getLastName()));
+        User user = new User(0L, trainerDTO.getFirstName(),
+                trainerDTO.getLastName(),
+                UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()),
+                UserUtil.generatePassword(),
+                trainerDTO.isActive());
+        Trainer trainer = new Trainer(0L, trainerDTO.getSpecialization(), user);
         trainerRepo.create(trainer);
     }
 
     @Override
     public void updateTrainer(Trainer trainer) {
         log.info("Updating trainer: " + trainer);
-        trainerRepo.updateTrainer(trainer);
+        trainerRepo.update(trainer);
     }
 
     public List<Trainer> findAll() {
         log.debug("Fetching all trainers");
-        return trainerRepo.findAllByType();
+        return trainerRepo.findAll();
     }
 }

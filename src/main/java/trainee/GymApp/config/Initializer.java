@@ -1,14 +1,9 @@
 package trainee.GymApp.config;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import trainee.GymApp.entity.Trainee;
-import trainee.GymApp.entity.Trainer;
-import trainee.GymApp.entity.Training;
-import trainee.GymApp.entity.TrainingType;
-import trainee.GymApp.service.Generators;
+import trainee.GymApp.config.mapping.*;
 import trainee.GymApp.storage.Storage;
 
 import java.io.IOException;
@@ -17,8 +12,8 @@ import java.util.List;
 @Component
 public class Initializer {
 
-    @Value("${initializationData.path}")
-    private String filePath;
+    @Autowired
+    private List<MappingCommand> mappingCommands;
 
     private final DataMapper dataMapper;
     private final Storage storage;
@@ -29,27 +24,26 @@ public class Initializer {
         this.storage = storage;
     }
 
-    @PostConstruct
+    @Value("${initializationData.path}")
+    private String filePath;
+
     public void initializeData() {
         try {
-            List<Object> dataList = dataMapper.mapJsonToObjects(filePath);
+            List<Object> dataList = dataMapper.mapJsonToObjects(filePath, getCommands());
             for (Object o : dataList) {
-                if (o instanceof Trainee) {
-                    Generators.generateUserId();
-                    Generators.generateTraineeId();
-                } else if (o instanceof Trainer) {
-                    Generators.generateUserId();
-                    Generators.generateTrainerId();
-                } else if (o instanceof Training) {
-                    Generators.generateTrainingId();
-                } else if (o instanceof TrainingType) {
-                    Generators.generateTrainingTypeId();
-                }
                 storage.save(o);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private List<MappingCommand> getCommands() {
+        return List.of(
+                new MapTraineeCommand(),
+                new MapTrainerCommand(),
+                new MapTrainingCommand(),
+                new MapTrainingTypeCommand()
+        );
     }
 }

@@ -56,11 +56,11 @@ public class TrainingServiceImplTest {
                 new Training(),
                 new Training()
         );
-        when(trainingRepo.findAllByType()).thenReturn(expectedTrainings);
+        when(trainingRepo.findAll()).thenReturn(expectedTrainings);
 
         List<Training> actualTrainings = trainingService.findAll();
 
         Assertions.assertEquals(expectedTrainings.size(), actualTrainings.size());
-        verify(trainingRepo, times(1)).findAllByType();
+        verify(trainingRepo, times(1)).findAll();
     }
 }

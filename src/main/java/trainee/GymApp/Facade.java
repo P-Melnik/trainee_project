@@ -17,9 +17,9 @@ import java.util.List;
 @Service
 public class Facade {
 
-    private TraineeService traineeService;
-    private TrainerService trainerService;
-    private TrainingService trainingService;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
+    private final TrainingService trainingService;
 
     @Autowired
     public Facade(TraineeService traineeService,
@@ -30,15 +30,15 @@ public class Facade {
         this.trainingService = trainingService;
     }
 
-    public Trainee getTraineeById(long traineeId) {
+    public Trainee getTrainee(long traineeId) {
         return traineeService.getTraineeById(traineeId);
     }
 
-    public Trainer getTrainerById(long trainerId) {
+    public Trainer getTrainer(long trainerId) {
         return trainerService.getTrainerById(trainerId);
     }
 
-    public Training getTrainingById(long trainingId) {
+    public Training getTraining(long trainingId) {
         return trainingService.getTrainingById(trainingId);
     }
 
