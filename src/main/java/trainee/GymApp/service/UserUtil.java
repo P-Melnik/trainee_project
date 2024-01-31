@@ -1,5 +1,6 @@
 package trainee.GymApp.service;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class UserUtil {
     }
 
     public static String generateLogin(String firstName, String lastName) {
-        if (!firstName.isBlank() && !lastName.isBlank()) {
+        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
             String login = String.format("%s.%s", firstName, lastName);
             if (!isLoginUnique(login)) {
                 login = login + loginPostfixId.incrementAndGet();
@@ -51,7 +52,6 @@ public class UserUtil {
             char randomChar = chars.charAt(randomIndex);
             password.append(randomChar);
         }
-
         return password.toString();
     }
 

@@ -19,27 +19,22 @@ public class TrainerServiceImpl implements TrainerService {
     @Autowired
     private TrainerRepo trainerRepo;
 
-
     @Override
-    public Trainer getTrainerById(long id) {
+    public Trainer getById(long id) {
         log.debug("Fetching trainer:" + id);
         return trainerRepo.findById(id);
     }
 
     @Override
-    public void createTrainer(TrainerDTO trainerDTO) {
+    public void create(TrainerDTO trainerDTO) {
         log.info("Creating trainer: " + trainerDTO);
-        User user = new User(0L, trainerDTO.getFirstName(),
-                trainerDTO.getLastName(),
-                UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()),
-                UserUtil.generatePassword(),
-                trainerDTO.isActive());
+        User user = new User(0L, trainerDTO.getFirstName(), trainerDTO.getLastName(), UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()), UserUtil.generatePassword(), trainerDTO.isActive());
         Trainer trainer = new Trainer(0L, trainerDTO.getSpecialization(), user);
         trainerRepo.create(trainer);
     }
 
     @Override
-    public void updateTrainer(Trainer trainer) {
+    public void update(Trainer trainer) {
         log.info("Updating trainer: " + trainer);
         trainerRepo.update(trainer);
     }

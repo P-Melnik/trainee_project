@@ -1,10 +1,10 @@
 package trainee.GymApp.dao;
 
-import trainee.GymApp.entity.Identifiable;
+import trainee.GymApp.entity.Entity;
 
 import java.util.List;
 
-public interface Repo<T extends Identifiable> {
+public interface Repo<T extends Entity> {
 
     void update(T t);
 

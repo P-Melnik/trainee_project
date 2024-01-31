@@ -35,7 +35,7 @@ public class TrainerServiceImplTest {
         Trainer expectedTrainer = new Trainer();
         when(trainerRepo.findById(trainerId)).thenReturn(expectedTrainer);
 
-        Trainer actualTrainer = trainerService.getTrainerById(trainerId);
+        Trainer actualTrainer = trainerService.getById(trainerId);
 
         Assertions.assertEquals(expectedTrainer, actualTrainer);
         verify(trainerRepo, times(1)).findById(trainerId);
@@ -47,7 +47,7 @@ public class TrainerServiceImplTest {
         trainerDTO.setFirstName("A");
         trainerDTO.setLastName("B");
 
-        trainerService.createTrainer(trainerDTO);
+        trainerService.create(trainerDTO);
 
         verify(trainerRepo, times(1)).create(any(Trainer.class));
     }
@@ -56,7 +56,7 @@ public class TrainerServiceImplTest {
     void testUpdateTrainer() {
         Trainer trainer = new Trainer();
 
-        trainerService.updateTrainer(trainer);
+        trainerService.update(trainer);
 
         verify(trainerRepo, times(1)).update(trainer);
     }

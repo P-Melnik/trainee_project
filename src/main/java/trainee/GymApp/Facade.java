@@ -31,15 +31,15 @@ public class Facade {
     }
 
     public Trainee getTrainee(long traineeId) {
-        return traineeService.getTraineeById(traineeId);
+        return traineeService.getById(traineeId);
     }
 
     public Trainer getTrainer(long trainerId) {
-        return trainerService.getTrainerById(trainerId);
+        return trainerService.getById(trainerId);
     }
 
     public Training getTraining(long trainingId) {
-        return trainingService.getTrainingById(trainingId);
+        return trainingService.getById(trainingId);
     }
 
     public List<Trainee> findAllTrainees() {
@@ -54,31 +54,28 @@ public class Facade {
         return trainingService.findAll();
     }
 
-
     public void createTrainee(TraineeDTO traineeDTO) {
-        traineeService.createTrainee(traineeDTO);
+        traineeService.create(traineeDTO);
     }
 
     public void createTrainer(TrainerDTO trainerDTO) {
-        trainerService.createTrainer(trainerDTO);
+        trainerService.create(trainerDTO);
     }
 
     public void createTraining(TrainingDTO trainingDTO) {
-        trainingService.createTraining(trainingDTO);
+        trainingService.create(trainingDTO);
     }
 
-
     public void updateTrainee(Trainee trainee) {
-        traineeService.updateTrainee(trainee);
+        traineeService.update(trainee);
     }
 
     public void updateTrainer(Trainer trainer) {
-        trainerService.updateTrainer(trainer);
+        trainerService.update(trainer);
     }
 
-
     public void deleteTraineeById(long traineeId) {
-        traineeService.deleteTraineeById(traineeId);
+        traineeService.delete(traineeId);
     }
 
 }

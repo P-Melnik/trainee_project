@@ -1,9 +1,18 @@
 package trainee.GymApp.storage;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import trainee.GymApp.entity.*;
+import trainee.GymApp.config.DataMapper;
+import trainee.GymApp.entity.Entity;
+import trainee.GymApp.entity.Trainee;
+import trainee.GymApp.entity.Trainer;
+import trainee.GymApp.entity.Training;
+import trainee.GymApp.entity.TrainingType;
+import trainee.GymApp.entity.User;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +23,11 @@ import java.util.stream.Collectors;
 @Component
 public class Storage {
 
-    private final Map<String, Object> storage = new ConcurrentHashMap<>();
+    private final Map<String, Entity> storage = new ConcurrentHashMap<>();
 
     private static final Map<Object, String> mapInst = new HashMap<>();
+
+    private static final Map<String, IdGenerator> mapGenerators = new HashMap<>();
 
     static {
         mapInst.put(Trainee.class, "trainee");
@@ -24,125 +35,122 @@ public class Storage {
         mapInst.put(Training.class, "training");
         mapInst.put(TrainingType.class, "trainingType");
         mapInst.put(User.class, "user");
+        mapGenerators.put("trainee", new IdGenerator());
+        mapGenerators.put("trainer", new IdGenerator());
+        mapGenerators.put("training", new IdGenerator());
+        mapGenerators.put("trainingType", new IdGenerator());
+        mapGenerators.put("user", new IdGenerator());
     }
 
-    IdGenerator traineeIdGenerator = new IdGenerator();
-    IdGenerator trainerIdGenerator = new IdGenerator();
-    IdGenerator traininigIdGenerator = new IdGenerator();
-    IdGenerator traininigTypeIdGenerator = new IdGenerator();
-    IdGenerator userIdGenerator = new IdGenerator();
+    @Autowired
+    private DataMapper dataMapper;
 
-    public Map<String, Object> getStorage() {
+    @Value("${initializationData.path}")
+    private String filePath;
+
+    public Map<String, Entity> getStorage() {
         return storage;
     }
 
-    public void save(Object o) {
-        String type = mapInst.get(o.getClass());
-        if (type != null) {
+    public void save(Entity o) {
+        String prefix = mapInst.get(o.getClass());
+        if (prefix != null) {
             long id = getId(o);
             IdGenerator generator = getIdGenerator(o);
             if (id != 0) {
-                assert generator != null;
                 generator.getGeneratedId();
             } else {
-                if (o instanceof Identifiable) {
-                    assert generator != null;
-                    setId((Identifiable) o, generator);
-                }
+                setId(o, generator);
             }
-            String key = generateKey(type, getId(o));
+            String key = generateKey(prefix, getId(o));
             storage.put(key, o);
             log.info("Saved {} with key: {}", o.getClass().getSimpleName(), key);
         } else {
-            log.warn("No entity type found for class: {}", o.getClass());
+            log.error("No entity type found for class: {}", o.getClass());
         }
     }
 
-    public void update(Object o) {
-        String type = mapInst.get(o.getClass());
-        if (type != null) {
+    public void update(Entity o) {
+        String prefix = mapInst.get(o.getClass());
+        if (prefix != null) {
             long id = getId(o);
-            String key = generateKey(type, id);
-
+            String key = generateKey(prefix, id);
             if (storage.containsKey(key)) {
                 storage.put(key, o);
                 log.info("Updated {} with key: {}", o.getClass().getSimpleName(), key);
             } else {
-                log.warn("{} not found with key: {}", o.getClass().getSimpleName(), key);
+                log.error("{} not found with key: {}", o.getClass().getSimpleName(), key);
             }
         } else {
-            log.warn("Unsupported object type for update");
+            log.error("Unsupported object type for update");
         }
     }
 
-    public <T extends Identifiable> T findById(Class<T> entityType, long id) {
-        String type = mapInst.get(entityType);
-        if (type != null) {
-            String key = generateKey(type, id);
+    public <T extends Entity> T findById(Class<T> entityType, long id) {
+        String prefix = mapInst.get(entityType);
+        if (prefix != null) {
+            String key = generateKey(prefix, id);
             return entityType.cast(storage.get(key));
         } else {
-            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+            log.error("No entity type found for class: {}", entityType.getSimpleName());
             return null;
         }
     }
 
-    public <T extends Identifiable> List<T> findAll(Class<T> entityType) {
-        String type = mapInst.get(entityType);
-        if (type != null) {
-            return storage.values().stream()
-                    .filter(entityType::isInstance)
-                    .map(entityType::cast)
+    public <T extends Entity> List<T> findAll(Class<T> entityType) {
+        String prefix = mapInst.get(entityType);
+        if (prefix != null) {
+            return storage.entrySet().stream()
+                    .filter(entry -> entry.getKey().startsWith(prefix))
+                    .map(entry -> entityType.cast(entry.getValue()))
                     .collect(Collectors.toList());
         } else {
-            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+            log.error("No entity type found for class: {}", entityType.getSimpleName());
             return List.of();
         }
     }
 
-    public <T extends Identifiable> void delete(Class<T> entityType, long id) {
-        String type = mapInst.get(entityType);
-        if (type != null) {
-            String key = generateKey(type, id);
+    public <T extends Entity> void delete(Class<T> entityType, long id) {
+        String prefix = mapInst.get(entityType);
+        if (prefix != null) {
+            String key = generateKey(prefix, id);
             if (storage.containsKey(key)) {
                 storage.remove(key);
-                log.info("Deleted {} with key: {}", type, key);
+                log.info("Deleted {} with key: {}", prefix, key);
             } else {
-                log.warn("{} not found for deletion with key: {}", type, key);
+                log.error("{} not found for deletion with key: {}", prefix, key);
             }
         } else {
-            log.warn("No entity type found for class: {}", entityType.getSimpleName());
+            log.error("No entity type found for class: {}", entityType.getSimpleName());
         }
     }
-
 
     private String generateKey(String type, long id) {
         return type + ":" + id;
     }
 
-    private long getId(Object o) {
-        if (o instanceof Identifiable) {
-            return ((Identifiable) o).getId();
-        }
-        return 0L;
+    private long getId(Entity o) {
+        return o.getId();
     }
 
-    private void setId(Identifiable identifiable, IdGenerator idGenerator) {
+    private void setId(Entity o, IdGenerator idGenerator) {
         long id = idGenerator.getGeneratedId();
-        identifiable.setId(id);
+        o.setId(id);
     }
 
-    private IdGenerator getIdGenerator(Object o) {
-        if (o instanceof Trainee) {
-            return traineeIdGenerator;
-        } else if (o instanceof Trainer) {
-            return trainerIdGenerator;
-        } else if (o instanceof Training) {
-            return traininigIdGenerator;
-        } else if (o instanceof TrainingType) {
-            return traininigTypeIdGenerator;
-        } else if (o instanceof User) {
-            return userIdGenerator;
+    private IdGenerator getIdGenerator(Entity o) {
+        String prefix = mapInst.get(o.getClass());
+        return mapGenerators.get(prefix);
+    }
+
+    public void initializeData() {
+        try {
+            List<Entity> dataList = dataMapper.mapJsonToObjects(filePath);
+            for (Entity o : dataList) {
+                save(o);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
     }
 }

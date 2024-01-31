@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import trainee.GymApp.entity.Entity;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.storage.Storage;
 
@@ -38,7 +39,7 @@ public class StorageTest {
 
         storage.save(trainee);
 
-        Map<String, Object> map = storage.getStorage();
+        Map<String, Entity> map = storage.getStorage();
         Assertions.assertEquals(1, map.size());
         Assertions.assertEquals(trainee, map.get("trainee:1"));
     }
@@ -56,7 +57,7 @@ public class StorageTest {
         updated.setAddress("address");
         storage.update(updated);
 
-        Map<String, Object> map = storage.getStorage();
+        Map<String, Entity> map = storage.getStorage();
         Assertions.assertEquals(updated, map.get("trainee:1"));
     }
 
@@ -68,7 +69,7 @@ public class StorageTest {
 
         storage.update(trainee);
 
-        Map<String, Object> map = storage.getStorage();
+        Map<String, Entity> map = storage.getStorage();
         Assertions.assertEquals(0, map.size());
 
     }
@@ -83,7 +84,7 @@ public class StorageTest {
 
         storage.delete(Trainee.class, id);
 
-        Map<String, Object> map = storage.getStorage();
+        Map<String, Entity> map = storage.getStorage();
 
         Assertions.assertEquals(0, map.size());
     }
@@ -98,7 +99,7 @@ public class StorageTest {
 
         storage.delete(Trainee.class, 2);
 
-        Map<String, Object> map = storage.getStorage();
+        Map<String, Entity> map = storage.getStorage();
         Assertions.assertEquals(1, map.size());
     }
 }

@@ -35,7 +35,7 @@ public class TrainingServiceImplTest {
         Training expectedTraining = new Training();
         when(trainingRepo.findById(trainingId)).thenReturn(expectedTraining);
 
-        Training actualTraining = trainingService.getTrainingById(trainingId);
+        Training actualTraining = trainingService.getById(trainingId);
 
         Assertions.assertEquals(expectedTraining, actualTraining);
         verify(trainingRepo, times(1)).findById(trainingId);
@@ -45,7 +45,7 @@ public class TrainingServiceImplTest {
     void testCreateTraining() {
         TrainingDTO trainingDTO = new TrainingDTO();
 
-        trainingService.createTraining(trainingDTO);
+        trainingService.create(trainingDTO);
 
         verify(trainingRepo, times(1)).create(any(Training.class));
     }

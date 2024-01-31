@@ -1,10 +1,9 @@
 package trainee.GymApp.config.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import trainee.GymApp.entity.Entity;
 
 public interface MappingCommand {
 
-    String getType();
-
-    Object execute(Object jsonElement, ObjectMapper objectMapper);
+    Entity execute(Object jsonElement, ObjectMapper objectMapper);
 }

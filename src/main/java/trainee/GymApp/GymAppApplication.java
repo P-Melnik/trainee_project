@@ -13,7 +13,6 @@ import trainee.GymApp.entity.Training;
 
 import java.time.LocalDate;
 
-
 @SpringBootApplication
 public class GymAppApplication {
 

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Training implements Identifiable {
+public class Training implements Entity {
 
     private long id;
     private long traineeId;

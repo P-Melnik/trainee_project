@@ -1,6 +1,5 @@
 package trainee.GymApp.dao.impl;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,10 +11,9 @@ import java.util.List;
 
 @Slf4j
 @Repository
-@NoArgsConstructor
 public class TraineeRepoImpl implements TraineeRepo {
 
-    private Storage storage;
+    private final Storage storage;
 
     @Autowired
     public TraineeRepoImpl(Storage storage) {

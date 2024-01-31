@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TrainingType implements Identifiable {
+public class TrainingType implements Entity {
 
     private long id;
     private String trainingTypeName;

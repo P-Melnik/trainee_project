@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Trainer implements Identifiable {
+public class Trainer implements Entity {
 
     private long id;
     private long specialization;

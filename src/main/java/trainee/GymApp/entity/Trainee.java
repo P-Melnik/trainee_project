@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Trainee implements Identifiable {
+public class Trainee implements Entity {
 
     private long id;
     @JsonProperty("dateOfBirth")

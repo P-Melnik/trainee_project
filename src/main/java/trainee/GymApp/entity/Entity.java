@@ -1,7 +1,9 @@
 package trainee.GymApp.entity;
 
-public interface Identifiable {
+public interface Entity {
+
     long getId();
 
     void setId(long id);
+
 }

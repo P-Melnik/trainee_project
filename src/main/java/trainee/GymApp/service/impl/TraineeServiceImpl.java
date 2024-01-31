@@ -20,34 +20,27 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeRepo traineeRepo;
 
     @Override
-    public Trainee getTraineeById(long id) {
+    public Trainee getById(long id) {
         log.debug("Fetching trainee:" + id);
         return traineeRepo.findById(id);
     }
 
     @Override
-    public void createTrainee(TraineeDTO traineeDTO) {
+    public void create(TraineeDTO traineeDTO) {
         log.info("Creating trainee: " + traineeDTO);
-        User user = new User(0L, traineeDTO.getFirstName(),
-                traineeDTO.getLastName(),
-                UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()),
-                UserUtil.generatePassword(),
-                traineeDTO.isActive());
-        Trainee trainee = new Trainee(0L,
-                traineeDTO.getDateOfBirth(),
-                traineeDTO.getAddress(),
-                user);
+        User user = new User(0L, traineeDTO.getFirstName(), traineeDTO.getLastName(), UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()), UserUtil.generatePassword(), traineeDTO.isActive());
+        Trainee trainee = new Trainee(0L, traineeDTO.getDateOfBirth(), traineeDTO.getAddress(), user);
         traineeRepo.create(trainee);
     }
 
     @Override
-    public void updateTrainee(Trainee trainee) {
+    public void update(Trainee trainee) {
         log.info("Updating trainee: " + trainee);
         traineeRepo.update(trainee);
     }
 
     @Override
-    public void deleteTraineeById(long traineeId) {
+    public void delete(long traineeId) {
         log.info("Deleting trainee:" + traineeId);
         traineeRepo.delete(traineeId);
     }

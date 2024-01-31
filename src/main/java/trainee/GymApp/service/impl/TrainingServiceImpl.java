@@ -18,21 +18,15 @@ public class TrainingServiceImpl implements TrainingService {
     private TrainingRepo trainingRepo;
 
     @Override
-    public Training getTrainingById(long id) {
+    public Training getById(long id) {
         log.debug("Fetching training:" + id);
         return trainingRepo.findById(id);
     }
 
     @Override
-    public void createTraining(TrainingDTO trainingDTO) {
+    public void create(TrainingDTO trainingDTO) {
         log.info("Creating training: " + trainingDTO);
-        Training training = new Training(0L,
-                trainingDTO.getTraineeId(),
-                trainingDTO.getTrainerId(),
-                trainingDTO.getTrainingName(),
-                trainingDTO.getTrainingType(),
-                trainingDTO.getTrainingDate(),
-                trainingDTO.getTrainingDuration());
+        Training training = new Training(0L, trainingDTO.getTraineeId(), trainingDTO.getTrainerId(), trainingDTO.getTrainingName(), trainingDTO.getTrainingType(), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
         trainingRepo.create(training);
     }
 

@@ -35,7 +35,7 @@ public class TraineeServiceImplTest {
         Trainee expectedTrainee = new Trainee();
         when(traineeRepo.findById(traineeId)).thenReturn(expectedTrainee);
 
-        Trainee actualTrainee = traineeService.getTraineeById(traineeId);
+        Trainee actualTrainee = traineeService.getById(traineeId);
 
         Assertions.assertEquals(expectedTrainee, actualTrainee);
         verify(traineeRepo, times(1)).findById(traineeId);
@@ -46,7 +46,7 @@ public class TraineeServiceImplTest {
         TraineeDTO traineeDTO = new TraineeDTO();
         traineeDTO.setFirstName("A");
         traineeDTO.setLastName("B");
-        traineeService.createTrainee(traineeDTO);
+        traineeService.create(traineeDTO);
 
         verify(traineeRepo, times(1)).create(any(Trainee.class));
     }
@@ -55,7 +55,7 @@ public class TraineeServiceImplTest {
     void testUpdateTrainee() {
         Trainee trainee = new Trainee();
 
-        traineeService.updateTrainee(trainee);
+        traineeService.update(trainee);
 
         verify(traineeRepo, times(1)).update(trainee);
     }
@@ -64,7 +64,7 @@ public class TraineeServiceImplTest {
     void testDeleteTraineeById() {
         long traineeId = 1;
 
-        traineeService.deleteTraineeById(traineeId);
+        traineeService.delete(traineeId);
 
         verify(traineeRepo, times(1)).delete(traineeId);
     }

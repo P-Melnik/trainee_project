@@ -3,18 +3,10 @@ package trainee.GymApp.service;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
 
-import java.util.List;
+public interface TraineeService extends Service<Trainee, TraineeDTO> {
 
-public interface TraineeService {
+    void update(Trainee trainee);
 
-    Trainee getTraineeById(long id);
-
-    List<Trainee> findAll();
-
-    void createTrainee(TraineeDTO traineeDTO);
-
-    void updateTrainee(Trainee trainee);
-
-    void deleteTraineeById(long traineeId);
+    void delete(long traineeId);
 
 }

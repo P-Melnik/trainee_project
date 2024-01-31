@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class User implements Identifiable {
+public class User implements Entity {
 
     private long id;
     private String firstName;
