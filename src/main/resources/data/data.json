@@ -1,0 +1,43 @@
+[
+  {
+    "type": "Trainee",
+    "id": 1,
+    "dateOfBirth": "1995-08-22",
+    "address": "456 Oak Street",
+    "user": {
+      "id": 1,
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "userName": "alice.smith",
+      "password": "securepassword",
+      "active": true
+    }
+  },
+  {
+    "type": "Trainee",
+    "id": 2,
+    "dateOfBirth": "1988-03-10",
+    "address": "789 Pine Avenue",
+    "user": {
+      "id": 2,
+      "firstName": "Bob",
+      "lastName": "Johnson",
+      "userName": "bob.johnson",
+      "password": "strongpassword",
+      "active": true
+    }
+  },
+  {
+    "type": "Trainer",
+    "id": 1,
+    "specialization": 1,
+    "user": {
+      "id": 3,
+      "firstName": "Trainer",
+      "lastName": "One",
+      "userName": "trainer.one",
+      "password": "trainerpass",
+      "active": true
+    }
+  }
+]
