@@ -1,11 +1,11 @@
 package trainee.GymApp.dao.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import trainee.GymApp.dao.TrainingRepo;
 import trainee.GymApp.entity.Training;
-import trainee.GymApp.storage.Storage;
 
 import java.util.List;
 
@@ -13,38 +13,39 @@ import java.util.List;
 @Repository
 public class TrainingRepoImpl implements TrainingRepo {
 
-    private final Storage storage;
-
-    @Autowired
-    public TrainingRepoImpl(Storage storage) {
-        this.storage = storage;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void create(Training training) {
         log.debug("Creating training: " + training);
-        storage.save(training);
+        entityManager.merge(training);
     }
 
     @Override
     public Training findById(long id) {
-        log.debug("Find training by id training:" + id);
-        return storage.findById(Training.class, id);
+        log.debug("Find training by id: " + id);
+        return entityManager.find(Training.class, id);
     }
 
     @Override
     public List<Training> findAll() {
         log.debug("Fetching all Trainings");
-        return storage.findAll(Training.class);
+        return entityManager.createQuery("SELECT t FROM Trainee t", Training.class).getResultList();
     }
 
     @Override
     public void update(Training training) {
-        log.warn("trying to update training");
+        log.debug("Updating training: " + training);
+        entityManager.merge(training);
     }
 
     @Override
     public void delete(long id) {
-        log.warn("trying to delete training");
+        log.debug("Deleting Training by id training:" + id);
+        Training training = findById(id);
+        if (training != null) {
+            entityManager.remove(training);
+        }
     }
 }

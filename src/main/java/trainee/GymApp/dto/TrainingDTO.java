@@ -3,6 +3,9 @@ package trainee.GymApp.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import trainee.GymApp.entity.Trainee;
+import trainee.GymApp.entity.Trainer;
+import trainee.GymApp.entity.TrainingType;
 
 import java.time.LocalDate;
 
@@ -11,11 +14,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TrainingDTO {
 
-    private long traineeId;
-    private long trainerId;
+    private Trainee trainee;
+    private Trainer trainer;
     private String trainingName;
-    private long trainingType;
+    private TrainingType trainingType;
     private LocalDate trainingDate;
-    private int trainingDuration;
+    private Number trainingDuration;
 
 }
