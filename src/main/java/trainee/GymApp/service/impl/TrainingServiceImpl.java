@@ -1,5 +1,6 @@
 package trainee.GymApp.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,11 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingRepo.findById(id);
     }
 
+    @Transactional
     @Override
     public void create(TrainingDTO trainingDTO) {
         log.info("Creating training: " + trainingDTO);
-        Training training = new Training(0L, trainingDTO.getTraineeId(), trainingDTO.getTrainerId(), trainingDTO.getTrainingName(), trainingDTO.getTrainingType(), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
+        Training training = new Training(trainingDTO.getTrainee(), trainingDTO.getTrainer(), trainingDTO.getTrainingName(), trainingDTO.getTrainingType(), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
         trainingRepo.create(training);
     }
 

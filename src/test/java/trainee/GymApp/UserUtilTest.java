@@ -8,7 +8,7 @@ public class UserUtilTest {
 
     @Test
     void testAddLogin() {
-        UserUtil.addLogin("john.doe");
+        UserUtil.generateLogin("john", "doe");
         Assertions.assertFalse(UserUtil.isLoginUnique("john.doe"));
     }
 
@@ -20,7 +20,7 @@ public class UserUtilTest {
 
     @Test
     void testGenerateLoginWithDuplicate() {
-        UserUtil.addLogin("Petr.Petrov");
+        UserUtil.generateLogin("Petr", "Petrov");
 
         String login = UserUtil.generateLogin("Petr", "Petrov");
         Assertions.assertFalse(UserUtil.isLoginUnique(login));
