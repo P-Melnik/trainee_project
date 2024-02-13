@@ -12,9 +12,9 @@ public interface TraineeService extends Service<Trainee, TraineeDTO> {
 
     void update(Trainee trainee);
 
-    void delete(long traineeId);
+    boolean delete(long traineeId);
 
-    void deleteByUserName(String userName);
+    boolean deleteByUserName(String userName);
 
     Trainee findByUserName(String userName);
 
@@ -24,7 +24,7 @@ public interface TraineeService extends Service<Trainee, TraineeDTO> {
 
     void changeStatus(String userName);
 
-    List<Trainer> notAssignedTrainers(String userName);
+    List<Trainer> notAssignedTrainers(Trainee trainee);
 
     void updateTrainers(String userName, Trainer trainer);
 

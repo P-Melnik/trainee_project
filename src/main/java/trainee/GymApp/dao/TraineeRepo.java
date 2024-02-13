@@ -11,19 +11,8 @@ public interface TraineeRepo extends Repo<Trainee> {
 
     Trainee findByUserName(String userName);
 
-    void deleteByUserName(String userName);
-
-    void changePassword(String userName, String newPassword);
-
-    boolean checkPassword(String userName, String password);
-
-    void changeStatus(String userName);
+    boolean deleteByUserName(String userName);
 
     List<Training> getWithCriteria(String traineeUserName, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingName);
-
-
-    List<Trainer> notAssignedTrainers(String userName);
-
-    void updateTrainers(String userName, Trainer trainer);
 
 }

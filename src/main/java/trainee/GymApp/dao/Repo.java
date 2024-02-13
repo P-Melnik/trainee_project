@@ -14,6 +14,6 @@ public interface Repo<T extends Model> {
 
     List<T> findAll();
 
-    void delete(long id);
+    boolean delete(long id);
 
 }

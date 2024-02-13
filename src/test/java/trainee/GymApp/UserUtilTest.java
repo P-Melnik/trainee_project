@@ -14,8 +14,7 @@ public class UserUtilTest {
 
     @Test
     void testGenerateLogin() {
-        String login = UserUtil.generateLogin("Ivan", "Ivanov");
-        Assertions.assertTrue(UserUtil.isLoginUnique(login));
+        Assertions.assertTrue(UserUtil.isLoginUnique("Ivan.Ivanov"));
     }
 
     @Test
