@@ -9,10 +9,8 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import trainee.GymApp.dao.TrainerRepo;
-import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
@@ -30,8 +28,9 @@ public class TrainerRepoImpl implements TrainerRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private UserRepo userRepo;
+    private static final String SELECT_ALL = "SELECT t FROM Trainer t";
+    private static final String FIND_BY_USERNAME = "SELECT t FROM Trainer t WHERE t.user.userName = :userName";
+    private static final String FIND_UNASSIGNED_TRAINERS = "SELECT t FROM Trainer t WHERE t NOT IN :assignedTrainers";
 
     @Override
     public void update(Trainer trainer) {
@@ -42,7 +41,7 @@ public class TrainerRepoImpl implements TrainerRepo {
     @Override
     public void create(Trainer trainer) {
         log.debug("Creating trainer: " + trainer);
-        entityManager.merge(trainer);
+        entityManager.persist(trainer);
     }
 
     @Override
@@ -54,39 +53,22 @@ public class TrainerRepoImpl implements TrainerRepo {
     @Override
     public List<Trainer> findAll() {
         log.debug("Fetching all Trainers");
-        return entityManager.createQuery("SELECT t FROM Trainer t", Trainer.class).getResultList();
+        return entityManager.createQuery(SELECT_ALL, Trainer.class).getResultList();
     }
 
     @Override
     public Trainer findByUserName(String userName) {
         log.debug("Find trainer by username: " + userName);
-        String jpql = "SELECT t FROM Trainer t WHERE t.user.userName = :userName";
-        TypedQuery<Trainer> query = entityManager.createQuery(jpql, Trainer.class);
+        TypedQuery<Trainer> query = entityManager.createQuery(FIND_BY_USERNAME, Trainer.class);
         query.setParameter("userName", userName);
         return query.getSingleResult();
-    }
-
-    @Override
-    public void changePassword(String userName, String newPassword) {
-        userRepo.changePassword(userName, newPassword);
-    }
-
-    // trainer username and password matching
-    @Override
-    public boolean checkPassword(String userName, String password) {
-        return userRepo.checkPassword(userName, password);
-    }
-
-    // activate / deactivate profile
-    @Override
-    public void changeStatus(String username) {
-        userRepo.changeStatus(username);
     }
 
     // Get Trainer Trainings List by trainer username and criteria (from date, to date, trainee
     //name).
     @Override
     public List<Trainer> getWithCriteria(String trainerUserName, LocalDate fromDate, LocalDate toDate, String traineeName) {
+        log.debug("fetching trainers with criteria");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Trainer> query = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> trainingRoot = query.from(Trainer.class);
@@ -111,16 +93,17 @@ public class TrainerRepoImpl implements TrainerRepo {
 
     @Override
     public List<Trainer> getUnassignedTrainers(Set<Trainer> set) {
+        log.debug("fetching unassigned trainers");
         Set<Long> trainerIds = set.stream().map(Trainer::getId)
                 .collect(Collectors.toSet());
-        String jpql = "SELECT t FROM Trainer t WHERE t NOT IN :assignedTrainers";
-        TypedQuery<Trainer> query = entityManager.createQuery(jpql, Trainer.class);
+        TypedQuery<Trainer> query = entityManager.createQuery(FIND_UNASSIGNED_TRAINERS, Trainer.class);
         query.setParameter("assignedTrainers", trainerIds);
         return query.getResultList();
     }
 
     @Override
-    public void delete(long id) {
+    public boolean delete(long id) {
         log.error("trying to delete trainer by id");
+        return false;
     }
 }

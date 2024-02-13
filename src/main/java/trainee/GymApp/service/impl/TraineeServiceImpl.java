@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TraineeRepo;
+import trainee.GymApp.dao.TrainerRepo;
+import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
@@ -16,6 +18,7 @@ import trainee.GymApp.service.UserUtil;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -23,6 +26,12 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Autowired
     private TraineeRepo traineeRepo;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private TrainerRepo trainerRepo;
 
     @Override
     public Trainee getById(long id) {
@@ -48,9 +57,9 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public void delete(long traineeId) {
+    public boolean delete(long traineeId) {
         log.info("Deleting trainee:" + traineeId);
-        traineeRepo.delete(traineeId);
+        return traineeRepo.delete(traineeId);
     }
 
     public List<Trainee> findAll() {
@@ -60,42 +69,51 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public void deleteByUserName(String userName) {
-        traineeRepo.deleteByUserName(userName);
+    public boolean deleteByUserName(String userName) {
+        return traineeRepo.deleteByUserName(userName);
     }
 
     @Override
     public Trainee findByUserName(String userName) {
+        log.debug("fetching trainee " + userName);
         return traineeRepo.findByUserName(userName);
     }
 
     @Transactional
     @Override
     public void changePassword(String userName, String newPassword) {
-        traineeRepo.changePassword(userName, newPassword);
+        log.info("checking password for " + userName);
+        userRepo.changePassword(userName, newPassword);
     }
 
     @Transactional
     @Override
     public boolean checkPassword(String userName, String password) {
-        return traineeRepo.checkPassword(userName, password);
+        log.debug("changing password " + userName);
+        return userRepo.checkPassword(userName, password);
     }
 
     @Transactional
     @Override
     public void changeStatus(String userName) {
-        traineeRepo.changeStatus(userName);
+        log.debug("changing status for " + userName);
+        userRepo.changeStatus(userName);
     }
 
     @Override
-    public List<Trainer> notAssignedTrainers(String userName) {
-        return traineeRepo.notAssignedTrainers(userName);
+    public List<Trainer> notAssignedTrainers(Trainee trainee) {
+        log.debug("fetching not assigned trainers");
+        Set<Trainer> set = trainee.getTrainers();
+        return trainerRepo.getUnassignedTrainers(set);
     }
 
     @Transactional
     @Override
     public void updateTrainers(String userName, Trainer trainer) {
-        traineeRepo.updateTrainers(userName, trainer);
+        log.debug("updating trainee trainers " + userName);
+        Trainee trainee = traineeRepo.findByUserName(userName);
+        trainee.getTrainers().add(trainer);
+        update(trainee);
     }
 
     @Override

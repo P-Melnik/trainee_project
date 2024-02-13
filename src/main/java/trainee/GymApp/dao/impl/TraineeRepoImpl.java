@@ -10,11 +10,8 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import trainee.GymApp.dao.TraineeRepo;
-import trainee.GymApp.dao.TrainerRepo;
-import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
@@ -22,7 +19,6 @@ import trainee.GymApp.entity.Training;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Repository
@@ -31,10 +27,9 @@ public class TraineeRepoImpl implements TraineeRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private TrainerRepo trainerRepo;
+    private static final String SELECT_ALL = "SELECT t FROM Trainee t";
+    private static final String DELETE_BY_USERNAME = "DELETE FROM Trainee t WHERE t.user.id IN (SELECT u.id FROM User u WHERE u.userName = :userName)";
+    private static final String SELECT_BY_USERNAME = "SELECT t FROM Trainee t WHERE t.user.userName = :userName";
 
     @Override
     public Trainee findById(long id) {
@@ -55,81 +50,47 @@ public class TraineeRepoImpl implements TraineeRepo {
     }
 
     @Override
-    public void delete(long id) {
+    public boolean delete(long id) {
         log.debug("Deleting Trainee by id: " + id);
         Trainee trainee = findById(id);
         if (trainee != null) {
             entityManager.remove(trainee);
+            return true;
+        } else {
+            return false;
         }
     }
 
     @Override
     public List<Trainee> findAll() {
         log.debug("Fetching all Trainees");
-        return entityManager.createQuery("SELECT t FROM Trainee t", Trainee.class).getResultList();
+        return entityManager.createQuery(SELECT_ALL, Trainee.class).getResultList();
     }
 
     @Override
-    public void deleteByUserName(String userName) {
+    public boolean deleteByUserName(String userName) {
         log.debug("Deleting trainee by username: " + userName);
 
-        String jpql = "DELETE FROM Trainee t " +
-                "WHERE EXISTS (SELECT 1 FROM User u WHERE u.id = t.user.id AND u.userName = :userName)";
-
-        Query query = entityManager.createQuery(jpql);
+        Query query = entityManager.createQuery(DELETE_BY_USERNAME);
         query.setParameter("userName", userName);
 
-        query.executeUpdate();
+        int deleteCount = query.executeUpdate();
+        return deleteCount > 0;
     }
 
     @Override
     public Trainee findByUserName(String userName) {
         log.debug("Find trainee by username: " + userName);
-        String jpql = "SELECT t FROM Trainee t WHERE t.user.userName = :userName";
-        TypedQuery<Trainee> query = entityManager.createQuery(jpql, Trainee.class);
+        TypedQuery<Trainee> query = entityManager.createQuery(SELECT_BY_USERNAME, Trainee.class);
         query.setParameter("userName", userName);
         return query.getSingleResult();
-    }
-
-    @Override
-    public void changePassword(String userName, String newPassword) {
-        userRepo.changePassword(userName, newPassword);
-    }
-
-    @Override
-    public boolean checkPassword(String userName, String password) {
-        return userRepo.checkPassword(userName, password);
-    }
-
-    // Activate / deactivate
-    @Override
-    public void changeStatus(String userName) {
-        userRepo.changeStatus(userName);
-    }
-
-    // Get trainers list that are not assigned on trainee by trainee's username.
-    @Override
-    public List<Trainer> notAssignedTrainers(String userName) {
-        log.debug("fetching not assigned trainers");
-
-        Trainee trainee = findByUserName(userName);
-        Set<Trainer> set = trainee.getTrainers();
-        return trainerRepo.getUnassignedTrainers(set);
-    }
-
-    // Update trainees trainers list
-    @Override
-    public void updateTrainers(String userName, Trainer trainer) {
-        log.debug("updating trainers");
-        Trainee trainee = findByUserName(userName);
-        trainee.getTrainers().add(trainer);
-        update(trainee);
     }
 
     // Get Trainee Trainings List by trainee username and criteria (from date, to date, trainer
     //name, training type).
     @Override
     public List<Training> getWithCriteria(String traineeUserName, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingName) {
+        log.debug("fetching trainings with criteria");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Training> query = criteriaBuilder.createQuery(Training.class);
         Root<Training> trainingRoot = query.from(Training.class);

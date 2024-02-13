@@ -52,7 +52,6 @@ public class Facade {
     }
 
     public Training getTraining(long trainingId) {
-
         return trainingService.getById(trainingId);
     }
 
@@ -86,9 +85,9 @@ public class Facade {
         trainerService.update(trainer);
     }
 
-    public void deleteTrainee(String userName, String password) {
+    public boolean deleteTrainee(String userName, String password) {
         authenticate(userName, password);
-        traineeService.deleteByUserName(userName);
+        return traineeService.deleteByUserName(userName);
     }
 
     public void changePassword(String userName, String password) {
