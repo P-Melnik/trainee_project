@@ -1,6 +1,5 @@
 package trainee.GymApp.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,16 +30,15 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerRepo.findById(id);
     }
 
-    @Transactional
     @Override
     public void create(TrainerDTO trainerDTO) {
         log.info("Creating trainer: " + trainerDTO);
+        validateTrainer(trainerDTO);
         User user = new User(trainerDTO.getFirstName(), trainerDTO.getLastName(), UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()), UserUtil.generatePassword(), trainerDTO.isActive());
         Trainer trainer = new Trainer(trainerDTO.getTrainingType(), user);
         trainerRepo.create(trainer);
     }
 
-    @Transactional
     @Override
     public void update(Trainer trainer) {
         log.info("Updating trainer: " + trainer);
@@ -58,7 +56,6 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerRepo.findByUserName(userName);
     }
 
-    @Transactional
     @Override
     public void changePassword(String userName, String newPassword) {
         log.info("changing password for " + userName);
@@ -71,7 +68,6 @@ public class TrainerServiceImpl implements TrainerService {
         return userRepo.checkPassword(userName, password);
     }
 
-    @Transactional
     @Override
     public void changeStatus(String username) {
         log.debug("change status " + username);
@@ -81,6 +77,14 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public List<Trainer> getWithCriteria(String trainerUserName, LocalDate fromDate, LocalDate toDate, String traineeName) {
         return trainerRepo.getWithCriteria(trainerUserName, fromDate, toDate, traineeName);
+    }
+
+    private void validateTrainer(TrainerDTO trainerDTO) {
+        log.debug("validating trainee registration");
+        if (trainerDTO.getTrainingType() != null && trainerDTO.getFirstName() != null && trainerDTO.getLastName() != null ) {
+        } else {
+            throw new RuntimeException("Fields should be not blank");
+        }
     }
 
 }
