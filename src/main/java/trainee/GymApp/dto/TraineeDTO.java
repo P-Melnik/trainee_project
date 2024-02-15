@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeDTO {
-
+    
     private String firstName;
     private String lastName;
     private boolean isActive;

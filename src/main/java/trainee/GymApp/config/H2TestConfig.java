@@ -25,7 +25,6 @@ import java.util.Properties;
 @Profile("test")
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
-//@EnableJpaRepositories(basePackages = "trainee.GymApp.dao")
 @ComponentScan(basePackages = "trainee.GymApp")
 public class H2TestConfig {
 
@@ -63,9 +62,6 @@ public class H2TestConfig {
         JpaTransactionManager tx = new JpaTransactionManager();
         tx.setEntityManagerFactory(emf);
         return tx;
-//        HibernateTransactionManager tx = new HibernateTransactionManager();
-//        tx.setSessionFactory(sf);
-//        return tx;
     }
 
     @Bean

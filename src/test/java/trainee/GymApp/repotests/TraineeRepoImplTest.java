@@ -1,5 +1,7 @@
-package trainee.GymApp;
+package trainee.GymApp.repotests;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ public class TraineeRepoImplTest {
 
     @Autowired
     private TraineeRepo traineeRepo;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     public void createTest() {
@@ -92,6 +97,7 @@ public class TraineeRepoImplTest {
         Trainee trainee = createSampleTrainee();
         traineeRepo.create(trainee);
         Assertions.assertTrue(traineeRepo.deleteByUserName(trainee.getUser().getUserName()));
+
     }
 
     @Test

@@ -8,6 +8,7 @@ import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.dto.TraineeDTO;
+import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
@@ -39,23 +40,21 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeRepo.findById(id);
     }
 
-    @Transactional
     @Override
     public void create(TraineeDTO traineeDTO) {
         log.info("Creating trainee: " + traineeDTO);
+        validateTrainee(traineeDTO);
         User user = new User(traineeDTO.getFirstName(), traineeDTO.getLastName(), UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()), UserUtil.generatePassword(), traineeDTO.isActive());
         Trainee trainee = new Trainee(traineeDTO.getDateOfBirth(), traineeDTO.getAddress(), user, new HashSet<>());
         traineeRepo.create(trainee);
     }
 
-    @Transactional
     @Override
     public void update(Trainee trainee) {
         log.info("Updating trainee: " + trainee);
         traineeRepo.update(trainee);
     }
 
-    @Transactional
     @Override
     public boolean delete(long traineeId) {
         log.info("Deleting trainee:" + traineeId);
@@ -67,7 +66,6 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeRepo.findAll();
     }
 
-    @Transactional
     @Override
     public boolean deleteByUserName(String userName) {
         return traineeRepo.deleteByUserName(userName);
@@ -79,21 +77,18 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeRepo.findByUserName(userName);
     }
 
-    @Transactional
     @Override
     public void changePassword(String userName, String newPassword) {
         log.info("checking password for " + userName);
         userRepo.changePassword(userName, newPassword);
     }
 
-    @Transactional
     @Override
     public boolean checkPassword(String userName, String password) {
         log.debug("changing password " + userName);
         return userRepo.checkPassword(userName, password);
     }
 
-    @Transactional
     @Override
     public void changeStatus(String userName) {
         log.debug("changing status for " + userName);
@@ -119,6 +114,15 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<Training> getWithCriteria(String traineeUserName, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingName) {
         return traineeRepo.getWithCriteria(traineeUserName, fromDate, toDate, trainerName, trainingName);
+    }
+
+    private void validateTrainee(TraineeDTO traineeDTO) {
+        log.debug("validating trainee registration");
+        if (traineeDTO.getFirstName() != null && traineeDTO.getLastName() != null && traineeDTO.getAddress() != null
+                && traineeDTO.getDateOfBirth() != null && traineeDTO.getDateOfBirth().isBefore(LocalDate.now())) {
+        } else {
+            throw new RuntimeException("Fields should be not blank");
+        }
     }
 
 }

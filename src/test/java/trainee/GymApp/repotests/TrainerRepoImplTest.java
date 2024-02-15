@@ -1,4 +1,4 @@
-package trainee.GymApp;
+package trainee.GymApp.repotests;
 
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;

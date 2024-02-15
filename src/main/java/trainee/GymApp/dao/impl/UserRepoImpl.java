@@ -83,10 +83,10 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void changePassword(String userName, String newPassword) {
+    public void changePassword(String userName, String password) {
         log.debug("Changing password for user: " + userName);
         Query query = entityManager.createQuery(UPDATE_PASSWORD);
-        query.setParameter("newPassword", newPassword);
+        query.setParameter("newPassword", password);
         query.setParameter("userName", userName);
         int updateCount = query.executeUpdate();
         if (updateCount != 0) {
@@ -94,6 +94,7 @@ public class UserRepoImpl implements UserRepo {
         } else {
             log.error("error during updating password");
         }
+
     }
 
     @Override
@@ -101,7 +102,7 @@ public class UserRepoImpl implements UserRepo {
         log.debug("Checking if password matches for user: " + userName);
         Query query = entityManager.createQuery(CHECK_PASSWORD);
         query.setParameter("userName", userName);
-        query.setParameter("newPassword", password);
+        query.setParameter("password", password);
         Long count = (Long) query.getSingleResult();
         return count == 1;
     }
@@ -113,6 +114,7 @@ public class UserRepoImpl implements UserRepo {
         query.setParameter("userName", userName);
         int updatedCount = query.executeUpdate();
         if (updatedCount == 0) {
+            System.out.println("NOT UPDATED");
             log.error("error while updating status");
             return;
         }

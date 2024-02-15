@@ -13,8 +13,6 @@ import trainee.GymApp.config.HibernateConfig;
 public class GymAppApplication {
 
     public static void main(String[] args) {
-//        AnnotationConfigApplicationContext applicationContext =
-//                new AnnotationConfigApplicationContext(HibernateConfig.class, H2TestConfig.class);
 
     }
 }
