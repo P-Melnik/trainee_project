@@ -1,6 +1,6 @@
 package trainee.GymApp.entity;
 
-public interface Entity {
+public interface Model {
 
     long getId();
 

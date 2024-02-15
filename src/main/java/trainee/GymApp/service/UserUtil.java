@@ -1,7 +1,7 @@
 package trainee.GymApp.service;
 
-import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -17,11 +17,8 @@ public class UserUtil {
 
     private static final AtomicLong loginPostfixId = new AtomicLong(0);
 
-    public static void addLogin(String userName) {
-        if (isLoginUnique(userName)) {
-            logins.add(userName);
-            log.debug("Added new unique login");
-        }
+    public static boolean isLoginUnique(String userName) {
+        return !logins.contains(userName);
     }
 
     public static String generateLogin(String firstName, String lastName) {
@@ -29,16 +26,12 @@ public class UserUtil {
             String login = String.format("%s.%s", firstName, lastName);
             if (!isLoginUnique(login)) {
                 login = login + loginPostfixId.incrementAndGet();
-                logins.add(login);
             }
+            logins.add(login);
             return login;
         } else {
             throw new IllegalArgumentException("First name and last name must not be null or empty");
         }
-    }
-
-    public static boolean isLoginUnique(String userName) {
-        return !logins.contains(userName);
     }
 
     public static String generatePassword() {

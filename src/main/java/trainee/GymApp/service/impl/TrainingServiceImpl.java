@@ -26,7 +26,7 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public void create(TrainingDTO trainingDTO) {
         log.info("Creating training: " + trainingDTO);
-        Training training = new Training(0L, trainingDTO.getTraineeId(), trainingDTO.getTrainerId(), trainingDTO.getTrainingName(), trainingDTO.getTrainingType(), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
+        Training training = new Training(trainingDTO.getTrainee(), trainingDTO.getTrainer(), trainingDTO.getTrainingName(), trainingDTO.getTrainingType(), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
         trainingRepo.create(training);
     }
 

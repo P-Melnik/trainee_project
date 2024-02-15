@@ -1,10 +1,10 @@
 package trainee.GymApp.dao;
 
-import trainee.GymApp.entity.Entity;
+import trainee.GymApp.entity.Model;
 
 import java.util.List;
 
-public interface Repo<T extends Entity> {
+public interface Repo<T extends Model> {
 
     void update(T t);
 
@@ -14,6 +14,6 @@ public interface Repo<T extends Entity> {
 
     List<T> findAll();
 
-    void delete(long id);
+    boolean delete(long id);
 
 }

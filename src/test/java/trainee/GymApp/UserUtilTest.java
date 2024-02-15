@@ -8,19 +8,18 @@ public class UserUtilTest {
 
     @Test
     void testAddLogin() {
-        UserUtil.addLogin("john.doe");
+        UserUtil.generateLogin("john", "doe");
         Assertions.assertFalse(UserUtil.isLoginUnique("john.doe"));
     }
 
     @Test
     void testGenerateLogin() {
-        String login = UserUtil.generateLogin("Ivan", "Ivanov");
-        Assertions.assertTrue(UserUtil.isLoginUnique(login));
+        Assertions.assertTrue(UserUtil.isLoginUnique("Ivan.Ivanov"));
     }
 
     @Test
     void testGenerateLoginWithDuplicate() {
-        UserUtil.addLogin("Petr.Petrov");
+        UserUtil.generateLogin("Petr", "Petrov");
 
         String login = UserUtil.generateLogin("Petr", "Petrov");
         Assertions.assertFalse(UserUtil.isLoginUnique(login));
