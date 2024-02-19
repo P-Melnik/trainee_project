@@ -22,6 +22,11 @@ public class UserRepoImpl implements UserRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private static final String SELECT_BY_USERNAME = "SELECT u FROM User u WHERE u.userName = :userName";
+    private static final String UPDATE_PASSWORD = "UPDATE User u SET u.password = :newPassword WHERE u.userName = :userName";
+    private static final String CHECK_PASSWORD = "SELECT count(u) FROM User u WHERE u.userName = :userName AND u.password = :password";
+    private static final String CHANGE_STATUS = "UPDATE User u SET u.isActive = NOT u.isActive WHERE u.userName = :userName";
+
     @Override
     public void update(User user) {
         log.debug("Updating user: " + user);
@@ -44,7 +49,7 @@ public class UserRepoImpl implements UserRepo {
     public User findByUserName(String userName) {
         log.debug("Finding user by userName: " + userName);
         try {
-            return entityManager.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class)
+            return entityManager.createQuery(SELECT_BY_USERNAME, User.class)
                     .setParameter("userName", userName)
                     .getSingleResult();
         } catch (NoResultException ex) {
@@ -66,21 +71,22 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void delete(long id) {
+    public boolean delete(long id) {
         log.debug("Deleting User by id: " + id);
         User user = findById(id);
         if (user != null) {
             entityManager.remove(user);
+            return true;
+        } else {
+            return false;
         }
     }
 
     @Override
-    public void changePassword(String userName, String newPassword) {
+    public void changePassword(String userName, String password) {
         log.debug("Changing password for user: " + userName);
-
-        String jpql = "UPDATE User u SET u.password = :newPassword WHERE u.userName = :userName";
-        Query query = entityManager.createQuery(jpql);
-        query.setParameter("newPassword", newPassword);
+        Query query = entityManager.createQuery(UPDATE_PASSWORD);
+        query.setParameter("newPassword", password);
         query.setParameter("userName", userName);
         int updateCount = query.executeUpdate();
         if (updateCount != 0) {
@@ -88,16 +94,15 @@ public class UserRepoImpl implements UserRepo {
         } else {
             log.error("error during updating password");
         }
+
     }
 
     @Override
     public boolean checkPassword(String userName, String password) {
         log.debug("Checking if password matches for user: " + userName);
-        // select exists
-        String jpql = "SELECT count(u) FROM User u WHERE u.userName = :userName AND u.password = :password";
-        Query query = entityManager.createQuery(jpql);
+        Query query = entityManager.createQuery(CHECK_PASSWORD);
         query.setParameter("userName", userName);
-        query.setParameter("newPassword", password);
+        query.setParameter("password", password);
         Long count = (Long) query.getSingleResult();
         return count == 1;
     }
@@ -105,12 +110,11 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public void changeStatus(String userName) {
         log.debug("Changing status for user: " + userName);
-
-        String jpql = "UPDATE User u SET u.isActive = NOT u.isActive WHERE u.userName = :userName";
-        Query query = entityManager.createQuery(jpql);
+        Query query = entityManager.createQuery(CHANGE_STATUS);
         query.setParameter("userName", userName);
         int updatedCount = query.executeUpdate();
         if (updatedCount == 0) {
+            System.out.println("NOT UPDATED");
             log.error("error while updating status");
             return;
         }

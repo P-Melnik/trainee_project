@@ -14,6 +14,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -31,10 +33,11 @@ public class Trainee implements Model {
     private LocalDate dateOfBirth;
     private String address;
     @OneToOne(cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
     private User user;
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tt",
+    @JoinTable(name = "trainer_trainee",
     joinColumns = @JoinColumn(name = "trainee_id"),
     inverseJoinColumns = @JoinColumn(name = "trainer_id"))
     private Set<Trainer> trainers;

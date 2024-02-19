@@ -1,48 +1,46 @@
 package trainee.GymApp.config;
 
 import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@Profile("test")
 @EnableTransactionManagement
-@EnableWebMvc
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = "trainee.GymApp")
-public class HibernateConfig {
+public class H2TestConfig {
 
-    @Value("${hibernate.dialect}")
+    @Value("${hibernate.dialect2}")
     private String dialect;
     @Value("${hibernate.hbm2ddl.auto}")
     private String hbm2ddlAuto;
     @Value("${hibernate.show_sql}")
     private String showSql;
-    @Value("${jdbc.url}")
+    @Value("${datasource.url}")
     private String url;
-    @Value("${jdbc.username}")
+    @Value("${datasource.username}")
     private String username;
-    @Value("${jdbc.password}")
+    @Value("${datasource.password}")
     private String password;
-    @Value("${jdbc.driver}")
+    @Value("${datasource.driver-class-name}")
     private String driver;
 
     @Bean
@@ -64,9 +62,6 @@ public class HibernateConfig {
         JpaTransactionManager tx = new JpaTransactionManager();
         tx.setEntityManagerFactory(emf);
         return tx;
-//        HibernateTransactionManager tx = new HibernateTransactionManager();
-//        tx.setSessionFactory(sf);
-//        return tx;
     }
 
     @Bean
@@ -94,5 +89,4 @@ public class HibernateConfig {
         pop.addScript(new FileSystemResource(pathScript));
         return pop;
     }
-
 }
