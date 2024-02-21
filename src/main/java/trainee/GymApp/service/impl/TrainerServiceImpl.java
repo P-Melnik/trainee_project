@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TrainerRepo;
+import trainee.GymApp.dao.TrainingTypeRepo;
 import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.Trainer;

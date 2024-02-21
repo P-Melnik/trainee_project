@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import trainee.GymApp.config.H2TestConfig;
 import trainee.GymApp.config.HibernateConfig;
 import trainee.GymApp.dao.TrainerRepo;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@WebAppConfiguration
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class})
 @Transactional
