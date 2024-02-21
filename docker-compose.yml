@@ -8,7 +8,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 31667
     ports:
-      - "5433:5432"
+      - 61888:5432
+#    volumes:
+#      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - app-network
 
@@ -17,7 +19,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./gymApp.war:/usr/local/tomcat/webapps/gymApp.war
+      - .app.war:/usr/local/tomcat/webapps/app.war
     depends_on:
       - postgres
     networks:

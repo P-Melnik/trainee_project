@@ -11,6 +11,7 @@ import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.service.impl.TraineeServiceImpl;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class TraineeServiceImplTest {
 
     @Test
     void testCreateTrainee() {
-        TraineeDTO traineeDTO = new TraineeDTO();
+        TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 10, 10), "street1");
         traineeDTO.setFirstName("A");
         traineeDTO.setLastName("B");
         traineeService.create(traineeDTO);
