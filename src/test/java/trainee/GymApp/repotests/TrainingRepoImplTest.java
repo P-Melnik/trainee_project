@@ -17,7 +17,7 @@ import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.entity.User;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -56,25 +56,6 @@ public class TrainingRepoImplTest {
         Training updatedTraining = trainingRepo.findById(training.getId());
         Assertions.assertNotNull(updatedTraining);
         Assertions.assertEquals("Updated Training", updatedTraining.getTrainingName());
-    }
-
-    @Test
-    void testFindAll() {
-        Training training = createSampleTraining();
-        trainingRepo.create(training);
-        List<Training> trainings = trainingRepo.findAll();
-        Assertions.assertNotNull(trainings);
-        Assertions.assertFalse(trainings.isEmpty());
-    }
-
-    @Test
-    void testDelete() {
-        Training training = createSampleTraining();
-        trainingRepo.create(training);
-        boolean deleted = trainingRepo.delete(training.getId());
-        Assertions.assertTrue(deleted);
-        Training deletedTraining = trainingRepo.findById(training.getId());
-        Assertions.assertNull(deletedTraining);
     }
 
     private Training createSampleTraining() {

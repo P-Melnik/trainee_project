@@ -6,13 +6,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements Model {
 
     @Id
@@ -23,6 +31,7 @@ public class User implements Model {
     @Column(name = "last_name", nullable = false)
     private String lastName;
     @Column(name = "user_name", unique = true, nullable = false)
+    @EqualsAndHashCode.Include
     private String userName;
     @Column(name = "password", nullable = false)
     private String password;

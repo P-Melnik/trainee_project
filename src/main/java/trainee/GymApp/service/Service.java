@@ -1,12 +1,14 @@
 package trainee.GymApp.service;
 
+import trainee.GymApp.dto.CredentialsDTO;
+import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Model;
 
 import java.util.List;
 
 public interface Service<T extends Model, D> {
 
-    void create(D dto);
+    CredentialsDTO create(D dto);
 
     T getById(long id);
 

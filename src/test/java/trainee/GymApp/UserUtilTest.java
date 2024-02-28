@@ -2,7 +2,7 @@ package trainee.GymApp;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 public class UserUtilTest {
 

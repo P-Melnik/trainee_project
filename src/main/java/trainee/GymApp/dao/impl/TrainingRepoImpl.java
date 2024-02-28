@@ -8,6 +8,7 @@ import trainee.GymApp.dao.TrainingRepo;
 import trainee.GymApp.entity.Training;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -37,20 +38,9 @@ public class TrainingRepoImpl implements TrainingRepo {
     }
 
     @Override
-    public void update(Training training) {
+    public Optional<Training> update(Training training) {
         log.debug("Updating training: " + training);
-        entityManager.merge(training);
+        return Optional.of(entityManager.merge(training));
     }
 
-    @Override
-    public boolean delete(long id) {
-        log.debug("Deleting Training by id training:" + id);
-        Training training = findById(id);
-        if (training != null) {
-            entityManager.remove(training);
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
