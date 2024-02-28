@@ -40,14 +40,12 @@ public class UserRepoImpl implements UserRepo {
         entityManager.persist(user);
     }
 
-    //todo return optional?
     @Override
     public User findById(long id) {
         log.debug("Find user by id: " + id);
         return entityManager.find(User.class, id);
     }
 
-    // todo exception catching in service layer?
     @Override
     public User findByUserName(String userName) {
         log.debug("Finding user by userName: " + userName);
