@@ -13,17 +13,24 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "trainees")
-@Data
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
 public class Trainee implements Model {
 
     @Id
@@ -35,12 +42,13 @@ public class Trainee implements Model {
     @OneToOne(cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
+    @EqualsAndHashCode.Include
     private User user;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "trainer_trainee",
     joinColumns = @JoinColumn(name = "trainee_id"),
     inverseJoinColumns = @JoinColumn(name = "trainer_id"))
-    private Set<Trainer> trainers;
+    private Set<Trainer> trainers = new HashSet<>();
 
     public Trainee(LocalDate dateOfBirth, String address, User user, Set<Trainer> trainers) {
         this.dateOfBirth = dateOfBirth;
@@ -48,4 +56,5 @@ public class Trainee implements Model {
         this.user = user;
         this.trainers = trainers;
     }
+
 }

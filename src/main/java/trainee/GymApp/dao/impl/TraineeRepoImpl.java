@@ -18,7 +18,10 @@ import trainee.GymApp.entity.Training;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Repository
@@ -30,7 +33,9 @@ public class TraineeRepoImpl implements TraineeRepo {
     private static final String SELECT_ALL = "SELECT t FROM Trainee t";
     private static final String DELETE_BY_USERNAME = "DELETE FROM Trainee t WHERE t.user.id IN (SELECT u.id FROM User u WHERE u.userName = :userName)";
     private static final String SELECT_BY_USERNAME = "SELECT t FROM Trainee t WHERE t.user.userName = :userName";
+    private static final String GET_UNASSIGNED = "SELECT * FROM trainers t WHERE t.id NOT IN (SELECT trainer_id FROM trainer_trainee WHERE trainee_id = (SELECT id FROM trainees WHERE user_id = (SELECT id FROM users WHERE user_name = :traineeUsername)))";
 
+    // todo do i need this?
     @Override
     public Trainee findById(long id) {
         log.debug("Find trainee by id: " + id);
@@ -44,21 +49,9 @@ public class TraineeRepoImpl implements TraineeRepo {
     }
 
     @Override
-    public void update(Trainee trainee) {
+    public Optional<Trainee> update(Trainee trainee) {
         log.debug("Updating Trainee: " + trainee);
-        entityManager.merge(trainee);
-    }
-
-    @Override
-    public boolean delete(long id) {
-        log.debug("Deleting Trainee by id: " + id);
-        Trainee trainee = findById(id);
-        if (trainee != null) {
-            entityManager.remove(trainee);
-            return true;
-        } else {
-            return false;
-        }
+        return Optional.of(entityManager.merge(trainee));
     }
 
     @Override
@@ -79,15 +72,22 @@ public class TraineeRepoImpl implements TraineeRepo {
     }
 
     @Override
-    public Trainee findByUserName(String userName) {
+    public Optional<Trainee> findByUserName(String userName) {
         log.debug("Find trainee by username: " + userName);
         TypedQuery<Trainee> query = entityManager.createQuery(SELECT_BY_USERNAME, Trainee.class);
         query.setParameter("userName", userName);
-        return query.getSingleResult();
+        return Optional.of(query.getSingleResult());
     }
 
-    // Get Trainee Trainings List by trainee username and criteria (from date, to date, trainer
-    //name, training type).
+    @Override
+    public Set<Trainer> getUnassignedTrainers(String userName) {
+        Query query = entityManager.createNativeQuery(GET_UNASSIGNED, Trainer.class);
+        query.setParameter("traineeUsername", userName);
+        @SuppressWarnings("unchecked")
+        List<Trainer> list = query.getResultList();
+        return new HashSet<>(list);
+    }
+
     @Override
     public List<Training> getWithCriteria(String traineeUserName, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingName) {
         log.debug("fetching trainings with criteria");

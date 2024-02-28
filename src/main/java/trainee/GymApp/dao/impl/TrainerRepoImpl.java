@@ -18,8 +18,8 @@ import trainee.GymApp.entity.Training;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -30,12 +30,12 @@ public class TrainerRepoImpl implements TrainerRepo {
 
     private static final String SELECT_ALL = "SELECT t FROM Trainer t";
     private static final String FIND_BY_USERNAME = "SELECT t FROM Trainer t WHERE t.user.userName = :userName";
-    private static final String FIND_UNASSIGNED_TRAINERS = "SELECT t FROM Trainer t WHERE t NOT IN :assignedTrainers";
+    private static final String FIND_TRAINEES = "SELECT tr FROM Trainer tr WHERE tr.user.userName = :trainerUserName";
 
     @Override
-    public void update(Trainer trainer) {
-        log.debug("Updating Trainer: " + trainer);
-        entityManager.merge(trainer);
+    public Trainer findById(long id) {
+        log.debug("Find trainer by id trainer:" + id);
+        return entityManager.find(Trainer.class, id);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class TrainerRepoImpl implements TrainerRepo {
     }
 
     @Override
-    public Trainer findById(long id) {
-        log.debug("Find trainer by id trainer:" + id);
-        return entityManager.find(Trainer.class, id);
+    public Optional<Trainer> update(Trainer trainer) {
+        log.debug("Updating Trainer: " + trainer);
+        return Optional.of(entityManager.merge(trainer));
     }
 
     @Override
@@ -57,23 +57,31 @@ public class TrainerRepoImpl implements TrainerRepo {
     }
 
     @Override
-    public Trainer findByUserName(String userName) {
+    public Optional<Trainer> findByUserName(String userName) {
         log.debug("Find trainer by username: " + userName);
         TypedQuery<Trainer> query = entityManager.createQuery(FIND_BY_USERNAME, Trainer.class);
         query.setParameter("userName", userName);
-        return query.getSingleResult();
+        return Optional.of(query.getSingleResult());
     }
 
-    // Get Trainer Trainings List by trainer username and criteria (from date, to date, trainee
-    //name).
     @Override
-    public List<Trainer> getWithCriteria(String trainerUserName, LocalDate fromDate, LocalDate toDate, String traineeName) {
+    public Set<Trainee> getTrainees(String userName) {
+        TypedQuery<Trainer> query = entityManager.createQuery(FIND_TRAINEES, Trainer.class);
+        query.setParameter("trainerUserName", userName);
+        Trainer trainer = query.getSingleResult();
+        return trainer.getTrainees();
+    }
+
+    @Override
+    public List<Training> getWithCriteria(String trainerUserName, LocalDate fromDate, LocalDate toDate, String traineeName) {
         log.debug("fetching trainers with criteria");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Trainer> query = criteriaBuilder.createQuery(Trainer.class);
-        Root<Trainer> trainingRoot = query.from(Trainer.class);
+        CriteriaQuery<Training> query = criteriaBuilder.createQuery(Training.class);
+        Root<Training> trainingRoot = query.from(Training.class);
 
+        Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee");
         Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer");
+
         List<Predicate> predicates = new ArrayList<>();
 
         predicates.add(criteriaBuilder.equal(trainerJoin.get("user").get("userName"), trainerUserName));
@@ -84,26 +92,10 @@ public class TrainerRepoImpl implements TrainerRepo {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(trainingRoot.get("trainingDate"), java.sql.Date.valueOf(toDate)));
         }
         if (traineeName != null) {
-            Join<Training, Trainee> traineeJoin = trainingRoot.join("trainee");
             predicates.add(criteriaBuilder.equal(traineeJoin.get("user").get("userName"), traineeName));
         }
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
 
-    @Override
-    public List<Trainer> getUnassignedTrainers(Set<Trainer> set) {
-        log.debug("fetching unassigned trainers");
-        Set<Long> trainerIds = set.stream().map(Trainer::getId)
-                .collect(Collectors.toSet());
-        TypedQuery<Trainer> query = entityManager.createQuery(FIND_UNASSIGNED_TRAINERS, Trainer.class);
-        query.setParameter("assignedTrainers", trainerIds);
-        return query.getResultList();
-    }
-
-    @Override
-    public boolean delete(long id) {
-        log.error("trying to delete trainer by id");
-        return false;
-    }
 }

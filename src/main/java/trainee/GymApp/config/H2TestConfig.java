@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -75,18 +72,4 @@ public class H2TestConfig {
         return dataSource;
     }
 
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(DataSource dataSource,
-                                                       @Value("${path.script.init}") String pathScript) {
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(populate(pathScript));
-        return initializer;
-    }
-
-    private ResourceDatabasePopulator populate(String pathScript) {
-        ResourceDatabasePopulator pop = new ResourceDatabasePopulator();
-        pop.addScript(new FileSystemResource(pathScript));
-        return pop;
-    }
 }

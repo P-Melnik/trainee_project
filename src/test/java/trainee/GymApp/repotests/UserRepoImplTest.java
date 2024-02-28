@@ -10,19 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import trainee.GymApp.config.H2TestConfig;
 import trainee.GymApp.config.HibernateConfig;
 import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.entity.User;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 import java.util.List;
 
 @WebAppConfiguration
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class}, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class})
 @Transactional
 @ActiveProfiles("test")
 public class UserRepoImplTest {
@@ -80,18 +79,6 @@ public class UserRepoImplTest {
         List<User> userList = userRepo.findAll();
         Assertions.assertNotNull(userList);
         Assertions.assertEquals(2, userList.size());
-    }
-
-    @Test
-    void testDelete() {
-        User user = createUser();
-        userRepo.create(user);
-
-        boolean deleted = userRepo.delete(user.getId());
-        Assertions.assertTrue(deleted);
-
-        User deletedUser = userRepo.findById(user.getId());
-        Assertions.assertNull(deletedUser);
     }
 
     @Test

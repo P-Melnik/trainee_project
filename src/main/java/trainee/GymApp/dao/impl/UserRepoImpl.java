@@ -14,6 +14,7 @@ import trainee.GymApp.dao.UserRepo;
 import trainee.GymApp.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -28,9 +29,9 @@ public class UserRepoImpl implements UserRepo {
     private static final String CHANGE_STATUS = "UPDATE User u SET u.isActive = NOT u.isActive WHERE u.userName = :userName";
 
     @Override
-    public void update(User user) {
+    public Optional<User> update(User user) {
         log.debug("Updating user: " + user);
-        entityManager.merge(user);
+        return Optional.of(entityManager.merge(user));
     }
 
     @Override
@@ -39,12 +40,14 @@ public class UserRepoImpl implements UserRepo {
         entityManager.persist(user);
     }
 
+    //todo return optional?
     @Override
     public User findById(long id) {
         log.debug("Find user by id: " + id);
         return entityManager.find(User.class, id);
     }
 
+    // todo exception catching in service layer?
     @Override
     public User findByUserName(String userName) {
         log.debug("Finding user by userName: " + userName);
@@ -71,30 +74,12 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public boolean delete(long id) {
-        log.debug("Deleting User by id: " + id);
-        User user = findById(id);
-        if (user != null) {
-            entityManager.remove(user);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void changePassword(String userName, String password) {
+    public int changePassword(String userName, String password) {
         log.debug("Changing password for user: " + userName);
         Query query = entityManager.createQuery(UPDATE_PASSWORD);
         query.setParameter("newPassword", password);
         query.setParameter("userName", userName);
-        int updateCount = query.executeUpdate();
-        if (updateCount != 0) {
-            log.info("updated password for user:" + userName);
-        } else {
-            log.error("error during updating password");
-        }
-
+        return query.executeUpdate();
     }
 
     @Override
@@ -108,16 +93,10 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public void changeStatus(String userName) {
+    public int changeStatus(String userName) {
         log.debug("Changing status for user: " + userName);
         Query query = entityManager.createQuery(CHANGE_STATUS);
         query.setParameter("userName", userName);
-        int updatedCount = query.executeUpdate();
-        if (updatedCount == 0) {
-            System.out.println("NOT UPDATED");
-            log.error("error while updating status");
-            return;
-        }
-        log.debug(("changed status for user:" + userName + " records: " + updatedCount));
+        return query.executeUpdate();
     }
 }
