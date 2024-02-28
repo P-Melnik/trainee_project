@@ -39,16 +39,6 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingRepo.findById(id);
     }
 
-//    @Override
-//    public void add(TrainingDTO trainingDTO) {
-//        log.info("Creating training: " + trainingDTO);
-//        Training training = new Training(traineeRepo.findByUserName(trainingDTO.getTrainee().getUser().getUserName()).orElseThrow(() -> new UserNotFoundException(trainingDTO.getTrainee().getUser().getUserName())),
-//                trainerRepo.findByUserName(trainingDTO.getTrainee().getUser().getUserName()).orElseThrow(() -> new UserNotFoundException(trainingDTO.getTrainee().getUser().getUserName())),
-//                trainingDTO.getTrainingName(),
-//                trainingTypeRepo.getTrainingType(trainingDTO.getTrainingType().getTrainingTypeName()), trainingDTO.getTrainingDate(), trainingDTO.getTrainingDuration());
-//        trainingRepo.create(training);
-//    }
-
     public List<Training> findAll() {
         log.debug("Fetching all trainings");
         return trainingRepo.findAll();
@@ -61,7 +51,6 @@ public class TrainingServiceImpl implements TrainingService {
         trainingRepo.create(training);
     }
 
-    //todo rmv create from common service interface?
     public CredentialsDTO create(TrainingDTO trainingDTO) {
         return new CredentialsDTO();
     }
