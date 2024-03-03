@@ -3,11 +3,11 @@ package trainee.GymApp.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.TrainingType;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data

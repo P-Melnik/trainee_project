@@ -24,6 +24,7 @@ import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.mappers.ControllersMapper;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class TrainerController {
     private Facade facade;
 
     @PostMapping
-    public ResponseEntity<CredentialsDTO> register(@RequestBody TrainerDTO trainerDTO) {
+    public ResponseEntity<CredentialsDTO> register(@Valid @RequestBody TrainerDTO trainerDTO) {
         CredentialsDTO credentialsDTO = facade.createTrainerProfile(trainerDTO);
         return new ResponseEntity<>(credentialsDTO, HttpStatus.CREATED);
     }
@@ -49,7 +50,7 @@ public class TrainerController {
     @PutMapping("/{username}")
     public ResponseEntity<TrainerFullDTO> update(@PathVariable(name = "username") String username,
                                                  @RequestHeader(name = "password") String password,
-                                                 @RequestBody TrainerDTO trainerDTO) {
+                                                 @Valid @RequestBody TrainerDTO trainerDTO) {
         Trainer trainer = facade.getTrainerByUserName(username, password);
         facade.updateTrainer(ControllersMapper.processTrainerUpdate(trainer, trainerDTO), username, password);
         return new ResponseEntity<>(ControllersMapper.mapTrainerToFullDTO(trainer), HttpStatus.OK);
@@ -64,7 +65,7 @@ public class TrainerController {
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "isActive", required = true) boolean isActive) {
+    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "isActive") boolean isActive) {
         Trainer trainer = facade.getTrainerByUserName(username, password);
         if (trainer.getUser().isActive() != isActive) {
             facade.changeTrainerStatus(username, password);
