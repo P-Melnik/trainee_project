@@ -28,6 +28,7 @@ import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.mappers.ControllersMapper;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class TraineeController {
     private Facade facade;
 
     @PostMapping
-    public ResponseEntity<CredentialsDTO> register(@RequestBody TraineeDTO traineeDTO) {
+    public ResponseEntity<CredentialsDTO> register(@Valid @RequestBody TraineeDTO traineeDTO) {
         CredentialsDTO credentialsDTO = facade.createTraineeProfile(traineeDTO);
         return new ResponseEntity<>(credentialsDTO, HttpStatus.CREATED);
     }
@@ -55,7 +56,7 @@ public class TraineeController {
     @PutMapping("/{username}")
     public ResponseEntity<TraineeFullDTO> update(@PathVariable(name = "username") String username,
                                                  @RequestHeader(name = "password") String password,
-                                                 @RequestBody TraineeDTO traineeDTO) {
+                                                 @Valid @RequestBody TraineeDTO traineeDTO) {
         Trainee trainee = facade.getTraineeByUserName(username, password);
         facade.updateTrainee(ControllersMapper.processTraineeUpdate(trainee, traineeDTO), username, password);
         return new ResponseEntity<>(ControllersMapper.mapTraineeToFullDTO(trainee), HttpStatus.OK);
@@ -75,7 +76,7 @@ public class TraineeController {
     }
 
     @PutMapping("/{username}/trainers")
-    public ResponseEntity<Set<TrainerForSet>> updateTrainers(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestBody Set<TrainersToAdd> trainers) {
+    public ResponseEntity<Set<TrainerForSet>> updateTrainers(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @Valid @RequestBody Set<TrainersToAdd> trainers) {
         return new ResponseEntity<>(facade.updateTrainersForTrainee(username, password, trainers), HttpStatus.OK);
     }
 
@@ -89,7 +90,7 @@ public class TraineeController {
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "isActive", required = true) boolean isActive) {
+    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "isActive") boolean isActive) {
         Trainee trainee = facade.getTraineeByUserName(username, password);
         if (trainee.getUser().isActive() != isActive) {
             facade.changeTraineeStatus(username, password);

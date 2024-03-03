@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import trainee.GymApp.entity.Trainee;
-import trainee.GymApp.entity.Trainer;
 
 @Data
 @NoArgsConstructor

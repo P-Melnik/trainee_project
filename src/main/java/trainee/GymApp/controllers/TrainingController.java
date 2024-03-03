@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import trainee.GymApp.Facade;
 import trainee.GymApp.dto.TrainingDTO;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/trainings")
 public class TrainingController {
@@ -20,7 +22,7 @@ public class TrainingController {
 
     @PostMapping
     public ResponseEntity<HttpStatus> add(@RequestHeader(name = "username") String username, @RequestHeader(name = "password") String password,
-                                          @RequestBody TrainingDTO trainingDTO) {
+                                          @Valid @RequestBody TrainingDTO trainingDTO) {
         facade.createTraining(trainingDTO, username, password);
         return new ResponseEntity<>(HttpStatus.OK);
     }
