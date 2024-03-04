@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TransactionLoggingAspect {
 
-    @Pointcut("within(trainee.GymApp.Facade)")
+    @Pointcut("within(trainee.GymApp.facade.Facade)")
     public void packagePointCut() {
     }
 

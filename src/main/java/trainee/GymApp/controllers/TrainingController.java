@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.dto.TrainingDTO;
 
 import javax.validation.Valid;

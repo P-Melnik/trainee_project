@@ -1,4 +1,4 @@
-package trainee.GymApp;
+package trainee.GymApp.facade;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

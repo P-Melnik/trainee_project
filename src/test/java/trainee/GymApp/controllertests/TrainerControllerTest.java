@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TrainerController;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TrainerDTO;

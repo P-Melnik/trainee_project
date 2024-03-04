@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TraineeController;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
