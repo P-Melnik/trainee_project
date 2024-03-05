@@ -7,22 +7,13 @@ services:
       POSTGRES_DB: gym_app
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 31667
-    ports:
-      - 61888:5432
-    networks:
-      - app-network
 
-  tomcat:
-    image: tomcat:latest
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    volumes:
-      - .app.war:/usr/local/tomcat/webapps/app.war
     depends_on:
       - postgres
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge

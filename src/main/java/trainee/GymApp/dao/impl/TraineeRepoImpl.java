@@ -35,7 +35,6 @@ public class TraineeRepoImpl implements TraineeRepo {
     private static final String SELECT_BY_USERNAME = "SELECT t FROM Trainee t WHERE t.user.userName = :userName";
     private static final String GET_UNASSIGNED = "SELECT * FROM trainers t WHERE t.id NOT IN (SELECT trainer_id FROM trainer_trainee WHERE trainee_id = (SELECT id FROM trainees WHERE user_id = (SELECT id FROM users WHERE user_name = :traineeUsername)))";
 
-    // todo do i need this?
     @Override
     public Trainee findById(long id) {
         log.debug("Find trainee by id: " + id);

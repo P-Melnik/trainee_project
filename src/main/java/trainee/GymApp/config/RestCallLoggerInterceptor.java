@@ -13,10 +13,15 @@ public class RestCallLoggerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
+        System.out.println("In interceptor 1!");
         StringBuffer requestURL = request.getRequestURL();
+        System.out.println("In interceptor 2!");
         log.info("RequestURL: {} ", requestURL.toString());
+        System.out.println("In interceptor 3!");
         String requestMethod = request.getMethod();
+        System.out.println("In interceptor 4!");
         log.info("Requested Method : {}", requestMethod);
+        System.out.println("In interceptor 5!");
         return true;
     }
 
