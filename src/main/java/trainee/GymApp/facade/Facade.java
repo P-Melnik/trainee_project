@@ -15,6 +15,8 @@ import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.entity.TrainingType;
+import trainee.GymApp.metrics.CountProcessedTrainingsMetric;
+import trainee.GymApp.metrics.CountRegisterMetric;
 import trainee.GymApp.service.TraineeService;
 import trainee.GymApp.service.TrainerService;
 import trainee.GymApp.service.TrainingService;
@@ -37,25 +39,31 @@ public class Facade {
     private final TrainingService trainingService;
     private final TrainingTypeService trainingTypeService;
     private final AuthService authService;
+    private final CountRegisterMetric countRegisterMetric;
+    private final CountProcessedTrainingsMetric countProcessedTrainingsMetric;
 
     @Autowired
     public Facade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService,
-                  TrainingTypeService trainingTypeService,AuthService authService) {
+                  TrainingTypeService trainingTypeService,AuthService authService, CountRegisterMetric countRegisterMetric, CountProcessedTrainingsMetric countProcessedTrainingsMetric) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
         this.trainingTypeService = trainingTypeService;
         this.authService = authService;
+        this.countRegisterMetric = countRegisterMetric;
+        this.countProcessedTrainingsMetric = countProcessedTrainingsMetric;
     }
 
 
     public CredentialsDTO createTraineeProfile(TraineeDTO traineeDTO) {
         log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        countRegisterMetric.incrementCounter();
         return traineeService.create(traineeDTO);
     }
 
     public CredentialsDTO createTrainerProfile(TrainerDTO trainerDTO) {
         log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        countRegisterMetric.incrementCounter();
         return trainerService.create(trainerDTO);
     }
 
@@ -74,6 +82,7 @@ public class Facade {
     public void createTraining(TrainingDTO trainingDTO, String userName, String password) {
         log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
+        countProcessedTrainingsMetric.incrementCounter();
         trainingService.createTraining(trainingDTO);
     }
 
