@@ -1,81 +1,50 @@
 package trainee.GymApp.sevicetests;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import trainee.GymApp.dao.TraineeRepo;
+import jakarta.transaction.Transactional;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
-import trainee.GymApp.entity.User;
 import trainee.GymApp.service.impl.TraineeServiceImpl;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
+@Transactional
+@ActiveProfiles("test")
 public class TraineeServiceImplTest {
 
-    @Mock
-    private TraineeRepo traineeRepo;
-
-    @InjectMocks
+    @Autowired
     private TraineeServiceImpl traineeService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void testGetTraineeById() {
-        long traineeId = 1L;
-        Trainee expectedTrainee = new Trainee();
-        when(traineeRepo.findById(traineeId)).thenReturn(expectedTrainee);
-
-        Trainee actualTrainee = traineeService.getById(traineeId);
-
-        Assertions.assertEquals(expectedTrainee, actualTrainee);
-        verify(traineeRepo, times(1)).findById(traineeId);
-    }
-
-    @Test
-    void testCreateTrainee() {
+    public void createTraineeAndFindByUsernameTest() {
         TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 10, 10), "street1");
-        traineeDTO.setFirstName("A");
-        traineeDTO.setLastName("B");
+        CredentialsDTO credentialsDTO = traineeService.create(traineeDTO);
+        Trainee trainee = traineeService.findByUserName("a.b");
+        assertEquals(credentialsDTO.getUserName(), trainee.getUser().getUserName());
+    }
+
+    @Test
+    public void updateAndDeleteTraineeTest() {
+        TraineeDTO traineeDTO = new TraineeDTO("b", "c", true, LocalDate.of(1991, 10, 10), "street1");
         traineeService.create(traineeDTO);
-
-        verify(traineeRepo, times(1)).create(any(Trainee.class));
+        Trainee trainee = traineeService.findByUserName("b.c");
+        trainee.setAddress("updated");
+        Trainee updatedTrainee = traineeService.update(trainee);
+        assertEquals(updatedTrainee.getAddress(), "updated");
+        traineeService.deleteByUserName("b.c");
+        assertThrows(EmptyResultDataAccessException.class, () -> traineeService.findByUserName("b.c"));
     }
 
-    @Test
-    void testUpdateTrainee() {
-        User user = new User("a", "b", "a.b", "1111111111", true);
-        Trainee trainee = new Trainee(LocalDate.of(1991,10,10), "street", user, new HashSet<>());
-        trainee.setAddress("street1");
-
-        traineeService.update(trainee);
-
-        verify(traineeRepo, times(1)).update(trainee);
-    }
-
-    @Test
-    void testFindAll() {
-        List<Trainee> expectedTrainees = Arrays.asList(
-                new Trainee(),
-                new Trainee()
-        );
-        when(traineeRepo.findAll()).thenReturn(expectedTrainees);
-
-        List<Trainee> actualTrainees = traineeService.findAll();
-
-        Assertions.assertEquals(expectedTrainees.size(), actualTrainees.size());
-        verify(traineeRepo, times(1)).findAll();
-    }
 }
