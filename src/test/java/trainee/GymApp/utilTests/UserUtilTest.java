@@ -1,4 +1,4 @@
-package trainee.GymApp;
+package trainee.GymApp.utilTests;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

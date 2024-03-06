@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface TrainerService extends Service<Trainer, TrainerDTO> {
 
-    void update(Trainer trainer);
+    Trainer update(Trainer trainer);
 
     Trainer findByUserName(String userName);
 

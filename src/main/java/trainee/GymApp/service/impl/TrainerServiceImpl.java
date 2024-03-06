@@ -16,6 +16,7 @@ import trainee.GymApp.entity.TrainingType;
 import trainee.GymApp.entity.User;
 import trainee.GymApp.exceptions.ChangePasswordException;
 import trainee.GymApp.exceptions.ChangeStatusException;
+import trainee.GymApp.exceptions.UpdateException;
 import trainee.GymApp.exceptions.UserNotFoundException;
 import trainee.GymApp.exceptions.ValidationException;
 import trainee.GymApp.utils.UserUtil;
@@ -57,9 +58,9 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public void update(Trainer trainer) {
+    public Trainer update(Trainer trainer) {
         log.info("Updating trainer: " + trainer);
-        trainerRepo.update(trainer);
+        return trainerRepo.update(trainer).orElseThrow(() -> new UpdateException(trainer.getUser().getUserName()));
     }
 
     public List<Trainer> findAll() {
