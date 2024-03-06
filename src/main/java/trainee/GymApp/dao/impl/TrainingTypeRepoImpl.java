@@ -3,7 +3,6 @@ package trainee.GymApp.dao.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import trainee.GymApp.dao.TrainingTypeRepo;
@@ -22,7 +21,6 @@ public class TrainingTypeRepoImpl implements TrainingTypeRepo {
     private static final String SELECT_TRAINING_TYPE = "SELECT tt FROM TrainingType tt WHERE tt.trainingTypeName = :trainingType";
     private static final String SELECT_ALL = "SELECT t FROM TrainingType t";
 
-    @Transactional
     @Override
     public TrainingType getTrainingType(String trainingType) {
         log.debug("fetching training type");
