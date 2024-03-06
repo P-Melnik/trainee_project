@@ -54,47 +54,46 @@ public class Facade {
         this.countProcessedTrainingsMetric = countProcessedTrainingsMetric;
     }
 
-
     public CredentialsDTO createTraineeProfile(TraineeDTO traineeDTO) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Performing user registration as trainee within the transaction with ID: {}", MDC.get("transactionId"));
         countRegisterMetric.incrementCounter();
         return traineeService.create(traineeDTO);
     }
 
     public CredentialsDTO createTrainerProfile(TrainerDTO trainerDTO) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Performing user registration as trainer within the transaction with ID: {}", MDC.get("transactionId"));
         countRegisterMetric.incrementCounter();
         return trainerService.create(trainerDTO);
     }
 
     public Trainee getTraineeByUserName(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching trainee within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         return traineeService.findByUserName(userName);
     }
 
     public Trainer getTrainerByUserName(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching trainer within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         return trainerService.findByUserName(userName);
     }
 
     public void createTraining(TrainingDTO trainingDTO, String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Processing new training within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         countProcessedTrainingsMetric.incrementCounter();
         trainingService.createTraining(trainingDTO);
     }
 
     public void updateTrainee(Trainee trainee, String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Updating trainee profile within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         traineeService.update(trainee);
     }
 
     @Transactional
     public Set<TrainerForSet> updateTrainersForTrainee(String username, String password, Set<TrainersToAdd> trainers) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Updating trainers list for trainee within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(username, password);
         for (TrainersToAdd trainer : trainers) {
             Trainer newTrainer = trainerService.findByUserName(trainer.getUsername());
@@ -105,55 +104,55 @@ public class Facade {
     }
 
     public void updateTrainer(Trainer trainer, String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Updating trainer profile within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         trainerService.update(trainer);
     }
 
     public void deleteTrainee(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Deleting trainee within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         traineeService.deleteByUserName(userName);
     }
 
     public void changePassword(String userName, String oldPassword, String newPassword) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Change password request within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, oldPassword);
         traineeService.changePassword(userName, newPassword);
     }
 
     public List<Training> getTraineeTrainingsWithCriteria(String traineeUserName, String password, LocalDate from, LocalDate to, String trainerUserName, String trainingType) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching trainings within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(traineeUserName, password);
         return traineeService.getWithCriteria(traineeUserName, from, to, trainerUserName, trainingType);
     }
 
     public List<Training> getTrainerTrainingsWithCriteria(String trainerUserName, String password, LocalDate from, LocalDate to, String traineeUserName) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching trainings within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(trainerUserName, password);
         return trainerService.getWithCriteria(trainerUserName, from, to, traineeUserName);
     }
 
     public void changeTraineeStatus(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Activation/De-Activation trainee within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         traineeService.changeStatus(userName);
     }
 
     public void changeTrainerStatus(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Activation/De-Activation trainer within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         trainerService.changeStatus(userName);
     }
 
     public Set<Trainer> getNotAssignedTrainers(String userName, String password) {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching not-assigned trainers within the transaction with ID: {}", MDC.get("transactionId"));
         authenticate(userName, password);
         return traineeService.getUnassignedTrainers(userName);
     }
 
     public Set<TrainingType> getAllTrainingTypes() {
-        log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
+        log.info("Fetching all training-types within the transaction with ID: {}", MDC.get("transactionId"));
         return trainingTypeService.getAll();
     }
 
