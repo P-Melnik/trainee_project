@@ -40,14 +40,13 @@ public class Facade {
 
     @Autowired
     public Facade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService,
-                  TrainingTypeService trainingTypeService,AuthService authService) {
+                  TrainingTypeService trainingTypeService, AuthService authService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
         this.trainingTypeService = trainingTypeService;
         this.authService = authService;
     }
-
 
     public CredentialsDTO createTraineeProfile(TraineeDTO traineeDTO) {
         log.info("Performing some operation within the transaction with ID: {}", MDC.get("transactionId"));
@@ -90,7 +89,6 @@ public class Facade {
         for (TrainersToAdd trainer : trainers) {
             Trainer newTrainer = trainerService.findByUserName(trainer.getUsername());
             traineeService.updateTrainers(username, newTrainer);
-
         }
         return traineeService.findByUserName(username).getTrainers().stream().map(TrainerForSet::map).collect(Collectors.toSet());
     }
