@@ -7,14 +7,13 @@ import trainee.GymApp.entity.Training;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface TraineeService extends Service<Trainee, TraineeDTO> {
 
-    void update(Trainee trainee);
+    Trainee update(Trainee trainee);
 
-    boolean delete(long traineeId);
-
-    boolean deleteByUserName(String userName);
+    void deleteByUserName(String userName);
 
     Trainee findByUserName(String userName);
 
@@ -24,7 +23,7 @@ public interface TraineeService extends Service<Trainee, TraineeDTO> {
 
     void changeStatus(String userName);
 
-    List<Trainer> notAssignedTrainers(Trainee trainee);
+    Set<Trainer> getUnassignedTrainers(String userName);
 
     void updateTrainers(String userName, Trainer trainer);
 

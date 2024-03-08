@@ -1,29 +1,30 @@
 package trainee.GymApp.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@EnableWebMvc
+@EnableAspectJAutoProxy
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = "trainee.GymApp")
 public class HibernateConfig {
@@ -62,9 +63,6 @@ public class HibernateConfig {
         JpaTransactionManager tx = new JpaTransactionManager();
         tx.setEntityManagerFactory(emf);
         return tx;
-//        HibernateTransactionManager tx = new HibernateTransactionManager();
-//        tx.setSessionFactory(sf);
-//        return tx;
     }
 
     @Bean
@@ -79,18 +77,10 @@ public class HibernateConfig {
     }
 
     @Bean
-    public DataSourceInitializer dataSourceInitializer(DataSource dataSource,
-                                                       @Value("${path.script.init}") String pathScript) {
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(populate(pathScript));
-        return initializer;
-    }
-
-    private ResourceDatabasePopulator populate(String pathScript) {
-        ResourceDatabasePopulator pop = new ResourceDatabasePopulator();
-        pop.addScript(new FileSystemResource(pathScript));
-        return pop;
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
     }
 
 }

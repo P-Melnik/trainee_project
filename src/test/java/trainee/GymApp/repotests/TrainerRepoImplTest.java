@@ -8,18 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import trainee.GymApp.config.H2TestConfig;
 import trainee.GymApp.config.HibernateConfig;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dao.TrainingTypeRepo;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.User;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@WebAppConfiguration
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class})
 @Transactional
@@ -67,20 +69,9 @@ public class TrainerRepoImplTest {
     void testFindByUserName() {
         Trainer trainer = createSampleTrainer();
         trainerRepo.create(trainer);
-        Trainer retrievedTrainer = trainerRepo.findByUserName(trainer.getUser().getUserName());
+        Trainer retrievedTrainer = trainerRepo.findByUserName(trainer.getUser().getUserName()).get();
         Assertions.assertNotNull(retrievedTrainer);
         Assertions.assertEquals(trainer.getUser().getUserName(), retrievedTrainer.getUser().getUserName());
-    }
-
-    @Test
-    void testGetUnassignedTrainers() {
-        Trainer trainer = createSampleTrainer();
-        trainerRepo.create(trainer);
-        Set<Trainer> assignedTrainers = new HashSet<>();
-        assignedTrainers.add(trainer);
-        List<Trainer> unassignedTrainers = trainerRepo.getUnassignedTrainers(assignedTrainers);
-        Assertions.assertNotNull(unassignedTrainers);
-        Assertions.assertTrue(unassignedTrainers.isEmpty());
     }
 
     private Trainer createSampleTrainer() {

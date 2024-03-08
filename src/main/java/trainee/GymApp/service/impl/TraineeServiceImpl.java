@@ -7,14 +7,20 @@ import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dao.UserRepo;
+import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
-import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.entity.User;
+import trainee.GymApp.exceptions.ChangePasswordException;
+import trainee.GymApp.exceptions.ChangeStatusException;
+import trainee.GymApp.exceptions.DeleteException;
+import trainee.GymApp.exceptions.UpdateException;
+import trainee.GymApp.exceptions.UserNotFoundException;
+import trainee.GymApp.exceptions.ValidationException;
 import trainee.GymApp.service.TraineeService;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -23,6 +29,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@Transactional
 public class TraineeServiceImpl implements TraineeService {
 
     @Autowired
@@ -41,24 +48,19 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void create(TraineeDTO traineeDTO) {
+    public CredentialsDTO create(TraineeDTO traineeDTO) {
         log.info("Creating trainee: " + traineeDTO);
         validateTrainee(traineeDTO);
         User user = new User(traineeDTO.getFirstName(), traineeDTO.getLastName(), UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()), UserUtil.generatePassword(), traineeDTO.isActive());
         Trainee trainee = new Trainee(traineeDTO.getDateOfBirth(), traineeDTO.getAddress(), user, new HashSet<>());
         traineeRepo.create(trainee);
+        return new CredentialsDTO(trainee.getUser().getUserName(), trainee.getUser().getPassword());
     }
 
     @Override
-    public void update(Trainee trainee) {
+    public Trainee update(Trainee trainee) {
         log.info("Updating trainee: " + trainee);
-        traineeRepo.update(trainee);
-    }
-
-    @Override
-    public boolean delete(long traineeId) {
-        log.info("Deleting trainee:" + traineeId);
-        return traineeRepo.delete(traineeId);
+        return traineeRepo.update(trainee).orElseThrow(() -> new UpdateException(trainee.getUser().getUserName()));
     }
 
     public List<Trainee> findAll() {
@@ -67,20 +69,25 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public boolean deleteByUserName(String userName) {
-        return traineeRepo.deleteByUserName(userName);
+    public void deleteByUserName(String userName) {
+        log.debug("deleting trainee " + userName);
+        if (!traineeRepo.deleteByUserName(userName)) {
+            throw new DeleteException(userName);
+        }
     }
 
     @Override
     public Trainee findByUserName(String userName) {
         log.debug("fetching trainee " + userName);
-        return traineeRepo.findByUserName(userName);
+        return traineeRepo.findByUserName(userName).orElseThrow(() -> new UserNotFoundException(userName));
     }
 
     @Override
     public void changePassword(String userName, String newPassword) {
         log.info("checking password for " + userName);
-        userRepo.changePassword(userName, newPassword);
+        if (userRepo.changePassword(userName, newPassword) == 0) {
+            throw new ChangePasswordException(userName);
+        }
     }
 
     @Override
@@ -92,23 +99,22 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void changeStatus(String userName) {
         log.debug("changing status for " + userName);
-        userRepo.changeStatus(userName);
+        if (userRepo.changeStatus(userName) == 0) {
+            throw new ChangeStatusException(userName);
+        }
     }
 
-    @Override
-    public List<Trainer> notAssignedTrainers(Trainee trainee) {
-        log.debug("fetching not assigned trainers");
-        Set<Trainer> set = trainee.getTrainers();
-        return trainerRepo.getUnassignedTrainers(set);
-    }
-
-    @Transactional
     @Override
     public void updateTrainers(String userName, Trainer trainer) {
         log.debug("updating trainee trainers " + userName);
-        Trainee trainee = traineeRepo.findByUserName(userName);
+        Trainee trainee = traineeRepo.findByUserName(userName).orElseThrow(() -> new UserNotFoundException(userName));
         trainee.getTrainers().add(trainer);
         update(trainee);
+    }
+
+    @Override
+    public Set<Trainer> getUnassignedTrainers(String userName) {
+        return traineeRepo.getUnassignedTrainers(userName);
     }
 
     @Override
@@ -120,8 +126,9 @@ public class TraineeServiceImpl implements TraineeService {
         log.debug("validating trainee registration");
         if (traineeDTO.getFirstName() != null && traineeDTO.getLastName() != null && traineeDTO.getAddress() != null
                 && traineeDTO.getDateOfBirth() != null && traineeDTO.getDateOfBirth().isBefore(LocalDate.now())) {
+            return;
         } else {
-            throw new RuntimeException("Fields should be not blank");
+            throw new ValidationException();
         }
     }
 

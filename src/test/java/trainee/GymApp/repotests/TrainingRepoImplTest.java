@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import trainee.GymApp.config.H2TestConfig;
 import trainee.GymApp.config.HibernateConfig;
 import trainee.GymApp.dao.TrainingRepo;
@@ -16,12 +17,13 @@ import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.Training;
 import trainee.GymApp.entity.User;
-import trainee.GymApp.service.UserUtil;
+import trainee.GymApp.utils.UserUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+@WebAppConfiguration
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class})
 @Transactional
@@ -54,25 +56,6 @@ public class TrainingRepoImplTest {
         Training updatedTraining = trainingRepo.findById(training.getId());
         Assertions.assertNotNull(updatedTraining);
         Assertions.assertEquals("Updated Training", updatedTraining.getTrainingName());
-    }
-
-    @Test
-    void testFindAll() {
-        Training training = createSampleTraining();
-        trainingRepo.create(training);
-        List<Training> trainings = trainingRepo.findAll();
-        Assertions.assertNotNull(trainings);
-        Assertions.assertFalse(trainings.isEmpty());
-    }
-
-    @Test
-    void testDelete() {
-        Training training = createSampleTraining();
-        trainingRepo.create(training);
-        boolean deleted = trainingRepo.delete(training.getId());
-        Assertions.assertTrue(deleted);
-        Training deletedTraining = trainingRepo.findById(training.getId());
-        Assertions.assertNull(deletedTraining);
     }
 
     private Training createSampleTraining() {

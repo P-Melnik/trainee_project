@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import trainee.GymApp.dao.TrainerRepo;
+import trainee.GymApp.dao.TrainingTypeRepo;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.Trainer;
+import trainee.GymApp.entity.TrainingType;
 import trainee.GymApp.service.impl.TrainerServiceImpl;
 
 import java.util.Arrays;
@@ -43,7 +46,8 @@ public class TrainerServiceImplTest {
 
     @Test
     void testCreateTrainer() {
-        TrainerDTO trainerDTO = new TrainerDTO();
+        TrainerDTO trainerDTO = new TrainerDTO(new TrainingType(),
+                "a", "b", true);
         trainerDTO.setFirstName("A");
         trainerDTO.setLastName("B");
 

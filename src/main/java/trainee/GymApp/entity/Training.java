@@ -10,7 +10,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,21 +22,26 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "trainings")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Training implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "trainee_id")
+    @EqualsAndHashCode.Include
     private Trainee trainee;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "trainer_id")
+    @EqualsAndHashCode.Include
     private Trainer trainer;
     @Column(name = "training_name")
+    @EqualsAndHashCode.Include
     private String trainingName;
     @ManyToOne
     @JoinColumn(name = "training_type_id")
@@ -40,9 +49,9 @@ public class Training implements Model {
     @Column(name = "training_date")
     private LocalDate trainingDate;
     @Column(name = "training_duration")
-    private Number trainingDuration;
+    private double trainingDuration;
 
-    public Training(Trainee trainee, Trainer trainer, String trainingName, TrainingType trainingType, LocalDate trainingDate, Number trainingDuration) {
+    public Training(Trainee trainee, Trainer trainer, String trainingName, TrainingType trainingType, LocalDate trainingDate, double trainingDuration) {
         this.trainee = trainee;
         this.trainer = trainer;
         this.trainingName = trainingName;

@@ -7,6 +7,7 @@ import trainee.GymApp.entity.Trainee;
 import trainee.GymApp.entity.Trainer;
 import trainee.GymApp.entity.TrainingType;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -14,11 +15,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TrainingDTO {
 
+    @NotNull
     private Trainee trainee;
+    @NotNull
     private Trainer trainer;
+    @NotNull
     private String trainingName;
+    @NotNull
     private TrainingType trainingType;
+    @NotNull
     private LocalDate trainingDate;
-    private Number trainingDuration;
+    @NotNull
+    private double trainingDuration;
 
 }

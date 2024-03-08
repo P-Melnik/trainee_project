@@ -5,4 +5,6 @@ import trainee.GymApp.entity.Training;
 
 public interface TrainingService extends Service<Training, TrainingDTO> {
 
+    void createTraining(TrainingDTO trainingDTO);
+
 }

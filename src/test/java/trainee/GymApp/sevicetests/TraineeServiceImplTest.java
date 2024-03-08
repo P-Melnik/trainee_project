@@ -9,9 +9,12 @@ import org.mockito.MockitoAnnotations;
 import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.entity.Trainee;
+import trainee.GymApp.entity.User;
 import trainee.GymApp.service.impl.TraineeServiceImpl;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -43,7 +46,7 @@ public class TraineeServiceImplTest {
 
     @Test
     void testCreateTrainee() {
-        TraineeDTO traineeDTO = new TraineeDTO();
+        TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 10, 10), "street1");
         traineeDTO.setFirstName("A");
         traineeDTO.setLastName("B");
         traineeService.create(traineeDTO);
@@ -53,20 +56,13 @@ public class TraineeServiceImplTest {
 
     @Test
     void testUpdateTrainee() {
-        Trainee trainee = new Trainee();
+        User user = new User("a", "b", "a.b", "1111111111", true);
+        Trainee trainee = new Trainee(LocalDate.of(1991,10,10), "street", user, new HashSet<>());
+        trainee.setAddress("street1");
 
         traineeService.update(trainee);
 
         verify(traineeRepo, times(1)).update(trainee);
-    }
-
-    @Test
-    void testDeleteTraineeById() {
-        long traineeId = 1;
-
-        traineeService.delete(traineeId);
-
-        verify(traineeRepo, times(1)).delete(traineeId);
     }
 
     @Test
