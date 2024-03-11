@@ -1,66 +1,65 @@
 package trainee.GymApp.sevicetests;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import trainee.GymApp.dao.TrainingRepo;
+import jakarta.transaction.Transactional;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import trainee.GymApp.dto.TraineeDTO;
+import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Training;
+import trainee.GymApp.entity.TrainingType;
+import trainee.GymApp.service.TraineeService;
+import trainee.GymApp.service.TrainerService;
 import trainee.GymApp.service.impl.TrainingServiceImpl;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
+@Transactional
+@ActiveProfiles("test")
 public class TrainingServiceImplTest {
 
-    @Mock
-    private TrainingRepo trainingRepo;
+    private final TrainingType trainingType = new TrainingType(1, "GYM");
 
-    @InjectMocks
+    @Autowired
     private TrainingServiceImpl trainingService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Autowired
+    private TraineeService traineeService;
+
+    @Autowired
+    private TrainerService trainerService;
+
+    @Before
+    public void init() {
+        TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 1, 1), "street1");
+        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "c", "d", true);
+        traineeService.create(traineeDTO);
+        trainerService.create(trainerDTO);
     }
 
     @Test
-    void testGetTrainingById() {
-        long trainingId = 1L;
-        Training expectedTraining = new Training();
-        when(trainingRepo.findById(trainingId)).thenReturn(expectedTraining);
-
-        Training actualTraining = trainingService.getById(trainingId);
-
-        Assertions.assertEquals(expectedTraining, actualTraining);
-        verify(trainingRepo, times(1)).findById(trainingId);
+    public void createTrainingTest() {
+        TrainingDTO trainingDTO = new TrainingDTO(traineeService.findByUserName("a.b"),
+                trainerService.findByUserName("c.d"), "weightlifting", trainingType,
+                LocalDate.of(2024, 1, 1), 60);
+        trainingService.createTraining(trainingDTO);
+        List<Training> result = trainingService.findAll();
+        System.out.println(Arrays.toString(result.toArray()));
+        System.out.println(result.get(0));
+        assertNotNull(result);
+        assertEquals(result.get(0).getTrainingName(), "weightlifting");
     }
 
-    @Test
-    void testCreateTraining() {
-        TrainingDTO trainingDTO = new TrainingDTO();
-
-        trainingService.create(trainingDTO);
-
-        verify(trainingRepo, times(1)).create(any(Training.class));
-    }
-
-    @Test
-    void testFindAll() {
-        List<Training> expectedTrainings = Arrays.asList(
-                new Training(),
-                new Training()
-        );
-        when(trainingRepo.findAll()).thenReturn(expectedTrainings);
-
-        List<Training> actualTrainings = trainingService.findAll();
-
-        Assertions.assertEquals(expectedTrainings.size(), actualTrainings.size());
-        verify(trainingRepo, times(1)).findAll();
-    }
 }

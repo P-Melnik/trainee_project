@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TraineeController;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
@@ -83,10 +83,10 @@ public class TraineeControllerTest {
     public void updateTraineeTest() throws Exception {
         Mockito.when(this.facade.getTraineeByUserName(USERNAME, PASSWORD)).thenReturn(testTrainee);
         mvc.perform(MockMvcRequestBuilders.put("/trainee/{username}", USERNAME)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Content-Type", MediaType.APPLICATION_JSON)
-                .header("password", PASSWORD)
-                .content(asJsonString(testUpdateTraineeDto)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Content-Type", MediaType.APPLICATION_JSON)
+                        .header("password", PASSWORD)
+                        .content(asJsonString(testUpdateTraineeDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.address").value("street2"));
     }
@@ -99,3 +99,4 @@ public class TraineeControllerTest {
         }
     }
 }
+

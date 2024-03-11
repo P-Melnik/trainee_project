@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.dto.TrainerFullDTO;

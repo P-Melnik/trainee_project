@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TrainingTypeController;
 import trainee.GymApp.entity.TrainingType;
 
@@ -51,7 +51,7 @@ public class TrainingTypeControllerTest {
         typeSet.add(new TrainingType(2, "SWIMMING"));
         Mockito.when(this.facade.getAllTrainingTypes()).thenReturn(typeSet);
         mvc.perform(MockMvcRequestBuilders.get("/training-types")
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].trainingTypeName").value("GYM"))
                 .andExpect(jsonPath("$[1].id").value(2))
@@ -66,3 +66,4 @@ public class TrainingTypeControllerTest {
         }
     }
 }
+

@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TrainerController;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TrainerDTO;
@@ -96,3 +96,4 @@ public class TrainerControllerTest {
         }
     }
 }
+

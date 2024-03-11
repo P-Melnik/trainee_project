@@ -11,7 +11,6 @@ import trainee.GymApp.dao.TrainingTypeRepo;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Training;
-import trainee.GymApp.exceptions.UserNotFoundException;
 import trainee.GymApp.service.TrainingService;
 
 import java.util.List;
@@ -39,6 +38,7 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingRepo.findById(id);
     }
 
+    @Override
     public List<Training> findAll() {
         log.debug("Fetching all trainings");
         return trainingRepo.findAll();
@@ -51,6 +51,7 @@ public class TrainingServiceImpl implements TrainingService {
         trainingRepo.create(training);
     }
 
+    @Override
     public CredentialsDTO create(TrainingDTO trainingDTO) {
         return new CredentialsDTO();
     }

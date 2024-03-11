@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import trainee.GymApp.Facade;
+import trainee.GymApp.facade.Facade;
 import trainee.GymApp.controllers.TrainingController;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Trainee;
@@ -57,11 +57,11 @@ public class TrainingControllerTest {
     @Test
     public void testAddTraining() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/trainings")
-                .accept(MediaType.APPLICATION_JSON)
-                .header("username", USERNAME)
-                .header("password", PASSWORD)
-                .header("Content-Type", MediaType.APPLICATION_JSON)
-                .content(asJsonString(testTrainingDTO)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("username", USERNAME)
+                        .header("password", PASSWORD)
+                        .header("Content-Type", MediaType.APPLICATION_JSON)
+                        .content(asJsonString(testTrainingDTO)))
                 .andExpect(status().isOk());
     }
 
@@ -73,3 +73,4 @@ public class TrainingControllerTest {
         }
     }
 }
+

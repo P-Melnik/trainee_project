@@ -1,16 +1,13 @@
 package trainee.GymApp.repotests;
 
 import jakarta.transaction.Transactional;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import trainee.GymApp.config.H2TestConfig;
-import trainee.GymApp.config.HibernateConfig;
+import org.springframework.test.context.junit4.SpringRunner;
 import trainee.GymApp.dao.TrainingRepo;
 import trainee.GymApp.dao.TrainingTypeRepo;
 import trainee.GymApp.entity.Trainee;
@@ -21,11 +18,9 @@ import trainee.GymApp.utils.UserUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 
-@WebAppConfiguration
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {HibernateConfig.class, H2TestConfig.class})
+@SpringBootTest
+@RunWith(SpringRunner.class)
 @Transactional
 @ActiveProfiles("test")
 public class TrainingRepoImplTest {
@@ -37,7 +32,7 @@ public class TrainingRepoImplTest {
     private TrainingTypeRepo trainingTypeRepo;
 
     @Test
-    void testCreateAndFindById() {
+    public void testCreateAndFindById() {
         Training training = createSampleTraining();
         trainingRepo.create(training);
         System.out.println(training);
@@ -48,7 +43,7 @@ public class TrainingRepoImplTest {
     }
 
     @Test
-    void testUpdate() {
+    public void testUpdate() {
         Training training = createSampleTraining();
         trainingRepo.create(training);
         training.setTrainingName("Updated Training");

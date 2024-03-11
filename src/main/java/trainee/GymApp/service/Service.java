@@ -1,7 +1,6 @@
 package trainee.GymApp.service;
 
 import trainee.GymApp.dto.CredentialsDTO;
-import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Model;
 
 import java.util.List;

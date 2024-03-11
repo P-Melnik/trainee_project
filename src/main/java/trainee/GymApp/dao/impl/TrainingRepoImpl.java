@@ -17,7 +17,7 @@ public class TrainingRepoImpl implements TrainingRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final String SELECT_ALL = "SELECT t FROM Trainee t";
+    private static final String SELECT_ALL = "SELECT t FROM Training t";
 
     @Override
     public void create(Training training) {
