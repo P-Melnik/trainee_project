@@ -13,6 +13,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private TrainerService trainerService;
 
+    private BruteForceProtector bruteForceProtector;
+
     public boolean authenticate(String username, String password) {
         return traineeService.checkPassword(username, password) || trainerService.checkPassword(username, password);
     }
