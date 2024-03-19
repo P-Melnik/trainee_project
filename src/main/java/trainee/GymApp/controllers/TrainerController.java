@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,33 +41,32 @@ public class TrainerController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<TrainerFullDTO> getTrainer(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password) {
-        Trainer trainer = facade.getTrainerByUserName(username, password);
+    public ResponseEntity<TrainerFullDTO> getTrainer(@PathVariable(name = "username") String username) {
+        Trainer trainer = facade.getTrainerByUserName(username);
         return new ResponseEntity<>(ControllersMapper.mapTrainerToFullDTO(trainer), HttpStatus.OK);
     }
 
     @PutMapping("/{username}")
     public ResponseEntity<TrainerFullDTO> update(@PathVariable(name = "username") String username,
-                                                 @RequestHeader(name = "password") String password,
                                                  @Valid @RequestBody TrainerDTO trainerDTO) {
-        Trainer trainer = facade.getTrainerByUserName(username, password);
-        facade.updateTrainer(ControllersMapper.processTrainerUpdate(trainer, trainerDTO), username, password);
+        Trainer trainer = facade.getTrainerByUserName(username);
+        facade.updateTrainer(ControllersMapper.processTrainerUpdate(trainer, trainerDTO));
         return new ResponseEntity<>(ControllersMapper.mapTrainerToFullDTO(trainer), HttpStatus.OK);
     }
 
     @GetMapping("/{username}/trainings")
-    public ResponseEntity<List<TrainingsForResponse>> getTrainings(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "from", required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+    public ResponseEntity<List<TrainingsForResponse>> getTrainings(@PathVariable(name = "username") String username, @RequestParam(name = "from", required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                                    @RequestParam(name = "to", required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate to, @RequestParam(name = "trainee-username", required = false) String traineeUsername) {
-        List<Training> list = facade.getTrainerTrainingsWithCriteria(username, password, from, to, traineeUsername);
+        List<Training> list = facade.getTrainerTrainingsWithCriteria(username, from, to, traineeUsername);
         List<TrainingsForResponse> response = list.stream().map(TrainingsForResponse::mapForTrainer).toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/{username}")
-    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestHeader(name = "password") String password, @RequestParam(name = "isActive") boolean isActive) {
-        Trainer trainer = facade.getTrainerByUserName(username, password);
+    public ResponseEntity<HttpStatus> changeStatus(@PathVariable(name = "username") String username, @RequestParam(name = "isActive") boolean isActive) {
+        Trainer trainer = facade.getTrainerByUserName(username);
         if (trainer.getUser().isActive() != isActive) {
-            facade.changeTrainerStatus(username, password);
+            facade.changeTrainerStatus(username);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

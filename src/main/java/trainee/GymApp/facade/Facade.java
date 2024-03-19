@@ -6,6 +6,8 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import trainee.GymApp.dto.CredentialsDTO;
+import trainee.GymApp.dto.LoginRequest;
+import trainee.GymApp.dto.LoginResponse;
 import trainee.GymApp.dto.TraineeDTO;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.dto.TrainerForSet;
@@ -26,6 +28,7 @@ import trainee.GymApp.service.authentication.UnauthorizedAccessException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,88 +69,74 @@ public class Facade {
         return trainerService.create(trainerDTO);
     }
 
-    public Trainee getTraineeByUserName(String userName, String password) {
+    public Trainee getTraineeByUserName(String userName) {
         log.info("Fetching trainee within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         return traineeService.findByUserName(userName);
     }
 
-    public Trainer getTrainerByUserName(String userName, String password) {
+    public Trainer getTrainerByUserName(String userName) {
         log.info("Fetching trainer within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         return trainerService.findByUserName(userName);
     }
 
-    public void createTraining(TrainingDTO trainingDTO, String userName, String password) {
+    public void createTraining(TrainingDTO trainingDTO) {
         log.info("Processing new training within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         countProcessedTrainingsMetric.incrementCounter();
         trainingService.createTraining(trainingDTO);
     }
 
-    public void updateTrainee(Trainee trainee, String userName, String password) {
+    public void updateTrainee(Trainee trainee) {
         log.info("Updating trainee profile within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         traineeService.update(trainee);
     }
 
     @Transactional
-    public Set<TrainerForSet> updateTrainersForTrainee(String username, String password, Set<TrainersToAdd> trainers) {
+    public Set<TrainerForSet> updateTrainersForTrainee(String username, Set<TrainersToAdd> trainers) {
         log.info("Updating trainers list for trainee within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(username, password);
         for (TrainersToAdd trainer : trainers) {
             Trainer newTrainer = trainerService.findByUserName(trainer.getUsername());
             traineeService.updateTrainers(username, newTrainer);
-
         }
         return traineeService.findByUserName(username).getTrainers().stream().map(TrainerForSet::map).collect(Collectors.toSet());
     }
 
-    public void updateTrainer(Trainer trainer, String userName, String password) {
+    public void updateTrainer(Trainer trainer) {
         log.info("Updating trainer profile within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         trainerService.update(trainer);
     }
 
-    public void deleteTrainee(String userName, String password) {
+    public void deleteTrainee(String userName) {
         log.info("Deleting trainee within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         traineeService.deleteByUserName(userName);
     }
 
     public void changePassword(String userName, String oldPassword, String newPassword) {
         log.info("Change password request within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, oldPassword);
         traineeService.changePassword(userName, newPassword);
     }
 
-    public List<Training> getTraineeTrainingsWithCriteria(String traineeUserName, String password, LocalDate from, LocalDate to, String trainerUserName, String trainingType) {
+    public List<Training> getTraineeTrainingsWithCriteria(String traineeUserName, LocalDate from, LocalDate to, String trainerUserName, String trainingType) {
         log.info("Fetching trainings within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(traineeUserName, password);
         return traineeService.getWithCriteria(traineeUserName, from, to, trainerUserName, trainingType);
     }
 
-    public List<Training> getTrainerTrainingsWithCriteria(String trainerUserName, String password, LocalDate from, LocalDate to, String traineeUserName) {
+    public List<Training> getTrainerTrainingsWithCriteria(String trainerUserName, LocalDate from, LocalDate to, String traineeUserName) {
         log.info("Fetching trainings within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(trainerUserName, password);
         return trainerService.getWithCriteria(trainerUserName, from, to, traineeUserName);
     }
 
-    public void changeTraineeStatus(String userName, String password) {
+    public void changeTraineeStatus(String userName) {
         log.info("Activation/De-Activation trainee within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         traineeService.changeStatus(userName);
     }
 
-    public void changeTrainerStatus(String userName, String password) {
+    public void changeTrainerStatus(String userName) {
         log.info("Activation/De-Activation trainer within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         trainerService.changeStatus(userName);
     }
 
-    public Set<Trainer> getNotAssignedTrainers(String userName, String password) {
+    public Set<Trainer> getNotAssignedTrainers(String userName) {
         log.info("Fetching not-assigned trainers within the transaction with ID: {}", MDC.get("transactionId"));
-        authenticate(userName, password);
         return traineeService.getUnassignedTrainers(userName);
     }
 
@@ -156,9 +145,12 @@ public class Facade {
         return trainingTypeService.getAll();
     }
 
-    public void authenticate(String username, String password) {
-        if (!authService.authenticate(username, password)) {
-            throw new UnauthorizedAccessException("Authentication failed");
+    public LoginResponse login(LoginRequest loginRequest) {
+        Optional<LoginResponse> response = authService.login(loginRequest);
+        if (response.isEmpty()) {
+            throw new UnauthorizedAccessException(authService.handleLoginFailure(loginRequest));
         }
+        return response.get();
     }
+
 }

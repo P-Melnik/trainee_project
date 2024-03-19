@@ -3,6 +3,7 @@ package trainee.GymApp.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dao.TrainerRepo;
@@ -41,6 +42,9 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     private TrainerRepo trainerRepo;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
     @Override
     public Trainee getById(long id) {
         log.debug("Fetching trainee:" + id);
@@ -51,16 +55,19 @@ public class TraineeServiceImpl implements TraineeService {
     public CredentialsDTO create(TraineeDTO traineeDTO) {
         log.info("Creating trainee: " + traineeDTO);
         validateTrainee(traineeDTO);
-        User user = new User(traineeDTO.getFirstName(), traineeDTO.getLastName(), UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()), UserUtil.generatePassword(), traineeDTO.isActive());
+        String pass = UserUtil.generatePassword();
+        User user = new User(traineeDTO.getFirstName(), traineeDTO.getLastName(),
+                UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()),
+                encoder.encode(pass), traineeDTO.isActive());
         Trainee trainee = new Trainee(traineeDTO.getDateOfBirth(), traineeDTO.getAddress(), user, new HashSet<>());
         traineeRepo.create(trainee);
-        return new CredentialsDTO(trainee.getUser().getUserName(), trainee.getUser().getPassword());
+        return new CredentialsDTO(trainee.getUser().getUsername(), pass);
     }
 
     @Override
     public Trainee update(Trainee trainee) {
         log.info("Updating trainee: " + trainee);
-        return traineeRepo.update(trainee).orElseThrow(() -> new UpdateException(trainee.getUser().getUserName()));
+        return traineeRepo.update(trainee).orElseThrow(() -> new UpdateException(trainee.getUser().getUsername()));
     }
 
     public List<Trainee> findAll() {

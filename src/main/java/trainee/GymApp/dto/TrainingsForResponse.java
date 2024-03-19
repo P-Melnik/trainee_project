@@ -20,11 +20,11 @@ public class TrainingsForResponse {
 
     public static TrainingsForResponse mapForTrainee(Training training) {
         return new TrainingsForResponse(training.getTrainingName(), training.getTrainingDate(), training.getTrainingType().getTrainingTypeName(),
-                training.getTrainingDuration(), training.getTrainer().getUser().getUserName());
+                training.getTrainingDuration(), training.getTrainer().getUser().getUsername());
     }
 
     public static TrainingsForResponse mapForTrainer(Training training) {
         return new TrainingsForResponse(training.getTrainingName(), training.getTrainingDate(), training.getTrainingType().getTrainingTypeName(),
-                training.getTrainingDuration(), training.getTrainee().getUser().getUserName());
+                training.getTrainingDuration(), training.getTrainee().getUser().getUsername());
     }
 }

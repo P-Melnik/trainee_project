@@ -16,7 +16,7 @@ public class TrainerForSet {
     private long specializationId;
 
     public static TrainerForSet map(Trainer trainer) {
-        return new TrainerForSet(trainer.getUser().getUserName(), trainer.getUser().getFirstName(),
+        return new TrainerForSet(trainer.getUser().getUsername(), trainer.getUser().getFirstName(),
                 trainer.getUser().getLastName(), trainer.getTrainingType().getId());
     }
 }

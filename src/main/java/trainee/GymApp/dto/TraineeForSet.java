@@ -15,7 +15,7 @@ public class TraineeForSet {
     private String lastName;
 
     public static TraineeForSet map(Trainee trainer) {
-        return new TraineeForSet(trainer.getUser().getUserName(), trainer.getUser().getFirstName(),
+        return new TraineeForSet(trainer.getUser().getUsername(), trainer.getUser().getFirstName(),
                 trainer.getUser().getLastName());
     }
 }

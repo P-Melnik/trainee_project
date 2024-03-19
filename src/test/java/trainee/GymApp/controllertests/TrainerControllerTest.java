@@ -55,7 +55,7 @@ public class TrainerControllerTest {
 
     @Test
     public void testGetTrainer() throws Exception {
-        Mockito.when(this.facade.getTrainerByUserName(USERNAME, PASSWORD)).thenReturn(testTrainer);
+        Mockito.when(this.facade.getTrainerByUserName(USERNAME)).thenReturn(testTrainer);
         mvc.perform(MockMvcRequestBuilders.get("/trainer/{username}", USERNAME)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("password", PASSWORD))
@@ -78,7 +78,7 @@ public class TrainerControllerTest {
 
     @Test
     public void testUpdateTrainer() throws Exception {
-        Mockito.when(this.facade.getTrainerByUserName(USERNAME, PASSWORD)).thenReturn(testTrainer);
+        Mockito.when(this.facade.getTrainerByUserName(USERNAME)).thenReturn(testTrainer);
         mvc.perform(MockMvcRequestBuilders.put("/trainer/{username}", USERNAME)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", MediaType.APPLICATION_JSON)
