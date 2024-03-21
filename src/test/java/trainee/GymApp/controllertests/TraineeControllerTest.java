@@ -32,9 +32,9 @@ public class TraineeControllerTest {
     private static final String USERNAME = "John.Doe";
     private static final String PASSWORD = "pppppppppp";
     private static final Trainee testTrainee = new Trainee(LocalDate.of(1991, 1, 1),
-            "street1", new User("John", "Doe", USERNAME, PASSWORD, true), new HashSet<>());
-    private static final TraineeDTO testTraineeDto = new TraineeDTO("John", "Doe", true, LocalDate.of(1991, 1, 1), "street1");
-    private static final TraineeDTO testUpdateTraineeDto = new TraineeDTO("John", "Doe", true, LocalDate.of(1991, 1, 1), "street2");
+            "street1", new User("John", "Doe", USERNAME, PASSWORD), new HashSet<>());
+    private static final TraineeDTO testTraineeDto = new TraineeDTO("John", "Doe", LocalDate.of(1991, 1, 1), "street1");
+    private static final TraineeDTO testUpdateTraineeDto = new TraineeDTO("John", "Doe", LocalDate.of(1991, 1, 1), "street2");
     private static final CredentialsDTO testCredentials = new CredentialsDTO(USERNAME, PASSWORD);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

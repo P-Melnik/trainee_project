@@ -1,5 +1,6 @@
 package trainee.GymApp.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,12 @@ public class AuthController {
     private Facade facade;
 
     @GetMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponse response = facade.login(loginRequest);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        LoginResponse loginResponse = facade.login(loginRequest);
+        Cookie cookie = new Cookie("jwtToken", loginResponse.getToken());
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/change")

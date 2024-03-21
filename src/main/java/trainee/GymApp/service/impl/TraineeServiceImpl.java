@@ -58,7 +58,7 @@ public class TraineeServiceImpl implements TraineeService {
         String pass = UserUtil.generatePassword();
         User user = new User(traineeDTO.getFirstName(), traineeDTO.getLastName(),
                 UserUtil.generateLogin(traineeDTO.getFirstName(), traineeDTO.getLastName()),
-                encoder.encode(pass), traineeDTO.isActive());
+                encoder.encode(pass));
         Trainee trainee = new Trainee(traineeDTO.getDateOfBirth(), traineeDTO.getAddress(), user, new HashSet<>());
         traineeRepo.create(trainee);
         return new CredentialsDTO(trainee.getUser().getUsername(), pass);

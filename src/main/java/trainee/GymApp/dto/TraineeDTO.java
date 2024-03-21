@@ -16,7 +16,6 @@ public class TraineeDTO {
     private String firstName;
     @NotNull
     private String lastName;
-    private boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
 

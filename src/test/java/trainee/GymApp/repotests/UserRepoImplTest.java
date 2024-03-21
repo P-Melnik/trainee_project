@@ -111,6 +111,6 @@ public class UserRepoImplTest {
 
     private User createUser() {
         return new User("pavel", "kotov", UserUtil.generateLogin("pavel", "kotov")
-        , UserUtil.generatePassword(), true);
+        , UserUtil.generatePassword());
     }
 }

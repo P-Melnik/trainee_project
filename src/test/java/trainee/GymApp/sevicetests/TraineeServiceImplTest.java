@@ -29,15 +29,15 @@ public class TraineeServiceImplTest {
 
     @Test
     public void createTraineeAndFindByUsernameTest() {
-        TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 10, 10), "street1");
+        TraineeDTO traineeDTO = new TraineeDTO("a", "b", LocalDate.of(1991, 10, 10), "street1");
         CredentialsDTO credentialsDTO = traineeService.create(traineeDTO);
         Trainee trainee = traineeService.findByUserName("a.b");
-        assertEquals(credentialsDTO.getUserName(), trainee.getUser().getUserName());
+        assertEquals(credentialsDTO.getUserName(), trainee.getUser().getUsername());
     }
 
     @Test
     public void updateAndDeleteTraineeTest() {
-        TraineeDTO traineeDTO = new TraineeDTO("b", "c", true, LocalDate.of(1991, 10, 10), "street1");
+        TraineeDTO traineeDTO = new TraineeDTO("b", "c", LocalDate.of(1991, 10, 10), "street1");
         traineeService.create(traineeDTO);
         Trainee trainee = traineeService.findByUserName("b.c");
         trainee.setAddress("updated");

@@ -58,7 +58,7 @@ public class TrainerServiceImpl implements TrainerService {
         TrainingType trainingType = trainingTypeRepo.getTrainingType(trainerDTO.getTrainingType().getTrainingTypeName());
         User user = new User(trainerDTO.getFirstName(), trainerDTO.getLastName(),
                 UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()),
-                encoder.encode(pass), trainerDTO.isActive());
+                encoder.encode(pass));
         Trainer trainer = new Trainer(trainingType, user);
         trainerRepo.create(trainer);
         return new CredentialsDTO(trainer.getUser().getUsername(), pass);

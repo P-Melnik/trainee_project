@@ -41,11 +41,9 @@ public class AuthServiceImpl implements AuthService {
             loginResponse = Optional.of(LoginResponse.builder().token(jwt).build());
         } catch (BadCredentialsException e) {
             log.error("Bad Cred error");
-        }
-        catch (LockedException e) {
+        } catch (LockedException e) {
             log.error("Locked acc");
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             log.error("Auth failure");
         }
         return loginResponse;
@@ -57,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         if (!bruteForceProtector.isUserLocked(loginRequest.getUsername())) {
             attempts = bruteForceProtector.recordFailedLoginAttempt(loginRequest.getUsername());
         } else {
-                return "Your account was locked. Time until unlock: " + bruteForceProtector.getTime(loginRequest.getUsername());
+            return "Your account was locked. Time until unlock: " + bruteForceProtector.getTime(loginRequest.getUsername());
         }
         if (attempts == bruteForceProtector.getMaxAttempts()) {
             return "Incorrect credentials. You have last attempt before temporary account locking.";

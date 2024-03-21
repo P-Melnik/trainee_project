@@ -46,7 +46,7 @@ public class TraineeRepoImplTest {
         Trainee trainee = createSampleTrainee();
         traineeRepo.create(trainee);
 
-        Trainee foundTrainee = traineeRepo.findByUserName(trainee.getUser().getUserName()).get();
+        Trainee foundTrainee = traineeRepo.findByUserName(trainee.getUser().getUsername()).get();
         System.out.println(foundTrainee);
         Assertions.assertNotNull(foundTrainee);
         Assertions.assertEquals(trainee.getId(), foundTrainee.getId());
@@ -82,7 +82,7 @@ public class TraineeRepoImplTest {
     public void testDeleteByUserName() {
         Trainee trainee = createSampleTrainee();
         traineeRepo.create(trainee);
-        Assertions.assertTrue(traineeRepo.deleteByUserName(trainee.getUser().getUserName()));
+        Assertions.assertTrue(traineeRepo.deleteByUserName(trainee.getUser().getUsername()));
 
     }
 
@@ -92,7 +92,7 @@ public class TraineeRepoImplTest {
         traineeRepo.create(trainee);
 
         List<Training> result = traineeRepo.getWithCriteria(
-                trainee.getUser().getUserName(),
+                trainee.getUser().getUsername(),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2024, 12, 31),
                 "TrainerUsername",
@@ -104,7 +104,7 @@ public class TraineeRepoImplTest {
 
     private Trainee createSampleTrainee() {
         User user = new User("andrew", "ivanov", UserUtil.generateLogin("andrew", "ivanov"),
-                UserUtil.generatePassword(), true);
+                UserUtil.generatePassword());
         return new Trainee(LocalDate.of(1991, 9, 9),
                 "street1", user, new HashSet<>());
     }

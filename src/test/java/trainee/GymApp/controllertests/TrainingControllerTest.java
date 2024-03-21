@@ -31,9 +31,9 @@ public class TrainingControllerTest {
     private static final String USERNAME = "Ivan.Petrov";
     private static final String PASSWORD = "pppppppppp";
     private static final Trainee testTrainee = new Trainee(LocalDate.of(1991, 1, 1),
-            "street1", new User("John", "Doe", USERNAME, PASSWORD, true), new HashSet<>());
+            "street1", new User("John", "Doe", USERNAME, PASSWORD), new HashSet<>());
     private static final TrainingType testTrainingType = new TrainingType(1, "GYM");
-    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD, true));
+    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD));
     private static final TrainingDTO testTrainingDTO = new TrainingDTO(testTrainee, testTrainer, "weightlifting", testTrainingType, LocalDate.of(2024, 2, 2), 60);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -30,9 +30,9 @@ public class TrainerControllerTest {
     private static final String USERNAME = "Ivan.Petrov";
     private static final String PASSWORD = "pppppppppp";
     private static final TrainingType testTrainingType = new TrainingType(1, "GYM");
-    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD, true));
-    private static final TrainerDTO testTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Petrov", true);
-    private static final TrainerDTO testUpdateTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Ivanov", true);
+    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD));
+    private static final TrainerDTO testTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Petrov");
+    private static final TrainerDTO testUpdateTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Ivanov");
     private static final CredentialsDTO testCredentials = new CredentialsDTO(USERNAME, PASSWORD);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

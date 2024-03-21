@@ -37,15 +37,20 @@ public class User implements Model, UserDetails {
     private String userName;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    private boolean isActive = true;
+    @Column(name = "account_expired", nullable = false, columnDefinition = "boolean default false")
+    private boolean accountExpired = false;
+    @Column(name = "account_locked", nullable = false, columnDefinition = "boolean default false")
+    private boolean accountLocked = false;
+    @Column(name = "credentials_expired", nullable = false, columnDefinition = "boolean default false")
+    private boolean credentialsExpired = false;
 
-    public User(String firstName, String lastName, String userName, String password, boolean isActive) {
+    public User(String firstName, String lastName, String userName, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
-        this.isActive = isActive;
     }
 
     @Override
@@ -60,21 +65,21 @@ public class User implements Model, UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !accountExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !accountLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !credentialsExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive;
     }
 }

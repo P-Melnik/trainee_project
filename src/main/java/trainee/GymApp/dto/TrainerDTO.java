@@ -18,6 +18,5 @@ public class TrainerDTO {
     private String firstName;
     @NotNull
     private String lastName;
-    private boolean isActive;
 
 }

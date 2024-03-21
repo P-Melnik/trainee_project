@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,11 +18,7 @@ public class BruteForceProtector {
 
     public boolean isUserLocked(String username) {
         Instant lockoutExpiryTime = lockoutExpiryTimes.get(username);
-        if (lockoutExpiryTime != null) {
-            return lockoutExpiryTime.isAfter(Instant.now());
-        } else {
-            return false;
-        }
+        return lockoutExpiryTime != null && lockoutExpiryTime.isAfter(Instant.now());
     }
 
     public int recordFailedLoginAttempt(String username) {
