@@ -8,9 +8,12 @@ import trainee.GymApp.dao.TraineeRepo;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dao.TrainingRepo;
 import trainee.GymApp.dao.TrainingTypeRepo;
+import trainee.GymApp.dto.ActionType;
 import trainee.GymApp.dto.CredentialsDTO;
+import trainee.GymApp.dto.RequestWorkloadDTO;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Training;
+import trainee.GymApp.mappers.WorkloadTrainingMapper;
 import trainee.GymApp.service.TrainingService;
 
 import java.util.List;
@@ -54,5 +57,9 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public CredentialsDTO create(TrainingDTO trainingDTO) {
         return new CredentialsDTO();
+    }
+
+    public RequestWorkloadDTO getWorkloadFromTraining(TrainingDTO trainingDTO, ActionType actionType) {
+        return WorkloadTrainingMapper.map(trainingDTO, actionType);
     }
 }

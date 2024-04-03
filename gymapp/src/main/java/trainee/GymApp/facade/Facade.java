@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import trainee.GymApp.client.WorkloadSummaryClient;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.LoginRequest;
 import trainee.GymApp.dto.LoginResponse;
@@ -47,7 +48,8 @@ public class Facade {
 
     @Autowired
     public Facade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService,
-                  TrainingTypeService trainingTypeService,AuthService authService, CountRegisterMetric countRegisterMetric, CountProcessedTrainingsMetric countProcessedTrainingsMetric) {
+                  TrainingTypeService trainingTypeService,AuthService authService, CountRegisterMetric countRegisterMetric,
+                  CountProcessedTrainingsMetric countProcessedTrainingsMetric) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
