@@ -13,6 +13,7 @@ import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.RequestWorkloadDTO;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.entity.Training;
+import trainee.GymApp.exceptions.DeleteException;
 import trainee.GymApp.mappers.WorkloadTrainingMapper;
 import trainee.GymApp.service.TrainingService;
 
@@ -57,6 +58,14 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public CredentialsDTO create(TrainingDTO trainingDTO) {
         return new CredentialsDTO();
+    }
+
+    @Override
+    public void delete(long id) {
+        log.debug("Deleting training: " + id);
+        if (!trainingRepo.deleteById(id)) {
+            throw new DeleteException(id);
+        }
     }
 
     public RequestWorkloadDTO getWorkloadFromTraining(TrainingDTO trainingDTO, ActionType actionType) {

@@ -147,6 +147,14 @@ public class Facade {
         return trainingTypeService.getAll();
     }
 
+    public Training getTrainingById(long id) {
+        return trainingService.getById(id);
+    }
+
+    public void deleteTraining(long id) {
+        trainingService.delete(id);
+    }
+
     public LoginResponse login(LoginRequest loginRequest) {
         Optional<LoginResponse> response = authService.login(loginRequest);
         if (response.isEmpty()) {

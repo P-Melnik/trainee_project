@@ -2,6 +2,7 @@ package trainee.GymApp.dao.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import trainee.GymApp.dao.TrainingRepo;
@@ -17,6 +18,7 @@ public class TrainingRepoImpl implements TrainingRepo {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private static final String DELETE_BY_ID = "DELETE FROM Training t WHERE t.id = :id";
     private static final String SELECT_ALL = "SELECT t FROM Training t";
 
     @Override
@@ -41,6 +43,15 @@ public class TrainingRepoImpl implements TrainingRepo {
     public Optional<Training> update(Training training) {
         log.debug("Updating training: " + training);
         return Optional.of(entityManager.merge(training));
+    }
+
+    @Override
+    public boolean deleteById(long id) {
+        log.debug("Deleting trainee by id: " + id);
+        Query query = entityManager.createQuery(DELETE_BY_ID);
+        query.setParameter("id", id);
+        int deleteCount = query.executeUpdate();
+        return deleteCount > 0;
     }
 
 }

@@ -7,4 +7,6 @@ public interface TrainingService extends Service<Training, TrainingDTO> {
 
     void createTraining(TrainingDTO trainingDTO);
 
+    void delete(long id);
+
 }

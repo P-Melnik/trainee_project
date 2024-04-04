@@ -1,11 +1,12 @@
 package trainee.service.summary.storage;
 
 import org.springframework.stereotype.Component;
+import trainee.service.summary.exceptions.WorkloadCalculationException;
 import trainee.service.summary.models.MonthData;
+import trainee.service.summary.models.RequestWorkloadDTO;
 import trainee.service.summary.models.Workload;
 import trainee.service.summary.models.YearData;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -25,14 +26,21 @@ public class Storage {
     }
 
     public Optional<Workload> create(String username) {
-        storage.put(username, new Workload());
+        storage.put(username, null);
         return Optional.of(storage.get(username));
     }
 
-    public void add(String username, LocalDate localDate, double duration) {
-        int year = localDate.getYear();
-        int month = localDate.getMonthValue();
-        Workload workload = storage.computeIfAbsent(username, key -> new Workload());
+    public void add(RequestWorkloadDTO workloadDTO) {
+        int year = workloadDTO.getTrainingDate().getYear();
+        int month = workloadDTO.getTrainingDate().getMonthValue();
+        Workload workload = storage.computeIfAbsent(workloadDTO.getUserName(), key -> {
+            Workload newWorkload = new Workload();
+            newWorkload.setUsername(workloadDTO.getUserName());
+            newWorkload.setFirstname(workloadDTO.getFirstName());
+            newWorkload.setLastname(workloadDTO.getLastName());
+            newWorkload.setActive(workloadDTO.isActive());
+            return newWorkload;
+        });
         YearData yearData = workload.getWorkload().stream()
                 .filter(yd -> yd.getYear() == year).findFirst()
                 .orElseGet(() -> {YearData newYd = new YearData(year, new ArrayList<>());
@@ -45,34 +53,34 @@ public class Storage {
                     yearData.getMonths().add(newMd);
                     return newMd;
                 });
-        monthData.setSummaryDuration(monthData.getSummaryDuration() + duration);
+        monthData.setSummaryDuration(monthData.getSummaryDuration() + workloadDTO.getTrainingDuration());
     }
 
-    public void delete(String username, LocalDate localDate, double duration) {
-        int year = localDate.getYear();
-        int month = localDate.getMonthValue();
-        Workload workload = storage.get(username);
+    public void delete(RequestWorkloadDTO workloadDTO) {
+        int year = workloadDTO.getTrainingDate().getYear();
+        int month = workloadDTO.getTrainingDate().getMonthValue();
+        Workload workload = storage.get(workloadDTO.getUserName());
         if (workload == null) {
-            return;
+            throw new WorkloadCalculationException(workloadDTO.getUserName());
         }
         Optional<YearData> yearDataOptional = workload.getWorkload().stream()
                 .filter(yd -> yd.getYear() == year)
                 .findFirst();
         if (yearDataOptional.isEmpty()) {
-            return;
+            throw new WorkloadCalculationException(workloadDTO.getUserName());
         }
         YearData yearData = yearDataOptional.get();
         Optional<MonthData> monthDataOptional = yearData.getMonths().stream()
                 .filter(md -> md.getMonth() == month)
                 .findFirst();
         if (monthDataOptional.isEmpty()) {
-            return;
+            throw new WorkloadCalculationException(workloadDTO.getUserName());
         }
         MonthData monthData = monthDataOptional.get();
-        if (duration > monthData.getSummaryDuration()) {
-            return;
+        if (workloadDTO.getTrainingDuration() > monthData.getSummaryDuration()) {
+            throw new WorkloadCalculationException(workloadDTO.getUserName());
         }
-        monthData.setSummaryDuration(monthData.getSummaryDuration() - duration);
+        monthData.setSummaryDuration(monthData.getSummaryDuration() - workloadDTO.getTrainingDuration());
         if (monthData.getSummaryDuration() == 0) {
             yearData.getMonths().remove(monthData);
         }
