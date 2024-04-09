@@ -1,6 +1,6 @@
 package trainee.service.summary.dao;
 
-import trainee.service.summary.models.RequestWorkloadDTO;
+import trainee.service.summary.models.WorkloadDTO;
 import trainee.service.summary.models.Workload;
 
 import java.util.Optional;
@@ -11,8 +11,8 @@ public interface Repo {
 
     Optional<Workload> create(String username);
 
-    void add(RequestWorkloadDTO requestWorkloadDTO);
+    void add(WorkloadDTO requestWorkloadDTO);
 
-    void delete(RequestWorkloadDTO requestWorkloadDTO);
+    void delete(WorkloadDTO requestWorkloadDTO);
 
 }

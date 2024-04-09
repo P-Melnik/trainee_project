@@ -3,7 +3,7 @@ package trainee.service.summary.storage;
 import org.springframework.stereotype.Component;
 import trainee.service.summary.exceptions.WorkloadCalculationException;
 import trainee.service.summary.models.MonthData;
-import trainee.service.summary.models.RequestWorkloadDTO;
+import trainee.service.summary.models.WorkloadDTO;
 import trainee.service.summary.models.Workload;
 import trainee.service.summary.models.YearData;
 
@@ -30,7 +30,7 @@ public class Storage {
         return Optional.of(storage.get(username));
     }
 
-    public void add(RequestWorkloadDTO workloadDTO) {
+    public void add(WorkloadDTO workloadDTO) {
         int year = workloadDTO.getTrainingDate().getYear();
         int month = workloadDTO.getTrainingDate().getMonthValue();
         Workload workload = storage.computeIfAbsent(workloadDTO.getUserName(), key -> {
@@ -56,7 +56,7 @@ public class Storage {
         monthData.setSummaryDuration(monthData.getSummaryDuration() + workloadDTO.getTrainingDuration());
     }
 
-    public void delete(RequestWorkloadDTO workloadDTO) {
+    public void delete(WorkloadDTO workloadDTO) {
         int year = workloadDTO.getTrainingDate().getYear();
         int month = workloadDTO.getTrainingDate().getMonthValue();
         Workload workload = storage.get(workloadDTO.getUserName());

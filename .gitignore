@@ -9,6 +9,11 @@ eureka_service/mvnw.cmd
 summary_microservice/.mvn/
 summary_microservice/mvnw
 summary_microservice/mvnw.cmd
+gateway/.gitignore
+gateway/.mvn/
+gateway/mvnw
+gateway/mvnw.cmd
+
 
 ### STS ###
 .apt_generated

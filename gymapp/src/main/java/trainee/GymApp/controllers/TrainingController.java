@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import trainee.GymApp.client.WorkloadSummaryClient;
 import trainee.GymApp.dto.ActionType;
-import trainee.GymApp.dto.RequestWorkloadDTO;
+import trainee.GymApp.dto.WorkloadDTO;
 import trainee.GymApp.entity.Training;
+import trainee.GymApp.exceptions.DeleteException;
 import trainee.GymApp.facade.Facade;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.mappers.WorkloadTrainingMapper;
@@ -40,11 +41,15 @@ public class TrainingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable(value = "id") long id) {
         Training training = facade.getTrainingById(id);
-        RequestWorkloadDTO requestWorkloadDTO = new RequestWorkloadDTO(training.getTrainer().getUser().getUsername(),
-                training.getTrainer().getUser().getFirstName(), training.getTrainer().getUser().getLastName(),
-                training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration(), ActionType.DELETE);
-        facade.deleteTraining(id);
-        workloadSummaryClient.manageWorkload(training.getTrainer().getUser().getUsername(), requestWorkloadDTO);
+        if (training != null) {
+            WorkloadDTO requestWorkloadDTO = new WorkloadDTO(training.getTrainer().getUser().getUsername(),
+                    training.getTrainer().getUser().getFirstName(), training.getTrainer().getUser().getLastName(),
+                    training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration(), ActionType.DELETE);
+            facade.deleteTraining(id);
+            workloadSummaryClient.manageWorkload(training.getTrainer().getUser().getUsername(), requestWorkloadDTO);
+        } else {
+            throw new DeleteException(id);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

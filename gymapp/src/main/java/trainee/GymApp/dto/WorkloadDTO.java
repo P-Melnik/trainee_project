@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RequestWorkloadDTO {
+public class WorkloadDTO {
 
     private String userName;
     private String firstName;

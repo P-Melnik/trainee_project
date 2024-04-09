@@ -2,7 +2,7 @@ package trainee.service.summary.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import trainee.service.summary.models.RequestWorkloadDTO;
+import trainee.service.summary.models.WorkloadDTO;
 import trainee.service.summary.models.Workload;
 import trainee.service.summary.storage.Storage;
 
@@ -29,12 +29,12 @@ public class StorageRepo implements Repo {
     }
 
     @Override
-    public void add(RequestWorkloadDTO workloadDTO) {
+    public void add(WorkloadDTO workloadDTO) {
         storage.add(workloadDTO);
     }
 
     @Override
-    public void delete(RequestWorkloadDTO workloadDTO) {
+    public void delete(WorkloadDTO workloadDTO) {
         storage.delete(workloadDTO);
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RequestWorkloadDTO {
+public class WorkloadDTO {
 
     @NotNull
     private String userName;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import trainee.service.summary.exceptions.WorkloadCalculationException;
 import trainee.service.summary.models.MonthlyWorkload;
-import trainee.service.summary.models.RequestWorkloadDTO;
+import trainee.service.summary.models.WorkloadDTO;
 import trainee.service.summary.models.Workload;
 import trainee.service.summary.service.SummaryService;
 
@@ -25,7 +25,7 @@ public class SummaryServiceController {
 
     @PostMapping("/workload/{username}")
     ResponseEntity<HttpStatus> manageTrainingSummary(@PathVariable(value = "username") String username,
-                                                     @Valid @RequestBody RequestWorkloadDTO workloadDTO) {
+                                                     @Valid @RequestBody WorkloadDTO workloadDTO) {
         summaryService.manage(workloadDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
