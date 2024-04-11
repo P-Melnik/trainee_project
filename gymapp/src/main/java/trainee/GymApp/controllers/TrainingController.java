@@ -1,15 +1,16 @@
 package trainee.GymApp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import trainee.GymApp.client.WorkloadSummaryClient;
 import trainee.GymApp.dto.ActionType;
 import trainee.GymApp.dto.WorkloadDTO;
 import trainee.GymApp.entity.Training;
@@ -17,6 +18,7 @@ import trainee.GymApp.exceptions.DeleteException;
 import trainee.GymApp.facade.Facade;
 import trainee.GymApp.dto.TrainingDTO;
 import trainee.GymApp.mappers.WorkloadTrainingMapper;
+import trainee.GymApp.messaging.Sender;
 
 import javax.validation.Valid;
 
@@ -24,17 +26,25 @@ import javax.validation.Valid;
 @RequestMapping("/trainings")
 public class TrainingController {
 
+    @Value("${queue.name.trainer.workload}")
+    private String queueName;
+
     @Autowired
     private Facade facade;
 
     @Autowired
-    private WorkloadSummaryClient workloadSummaryClient;
+    private Sender sender;
 
     @PostMapping
     public ResponseEntity<HttpStatus> add(@Valid @RequestBody TrainingDTO trainingDTO) {
         facade.createTraining(trainingDTO);
-        workloadSummaryClient.manageWorkload(trainingDTO.getTrainer().getUser().getUsername(),
-                WorkloadTrainingMapper.map(trainingDTO, ActionType.ADD));
+        WorkloadDTO workloadDTO = WorkloadTrainingMapper.map(trainingDTO);
+        MessagePostProcessor messagePostProcessor = message -> {
+            message.setStringProperty("username", workloadDTO.getUserName());
+            message.setStringProperty("actionType", ActionType.ADD.toString());
+            return message;
+        };
+        sender.sendTrainerWorkloadMessage(queueName, workloadDTO, messagePostProcessor);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -42,11 +52,16 @@ public class TrainingController {
     public ResponseEntity<HttpStatus> delete(@PathVariable(value = "id") long id) {
         Training training = facade.getTrainingById(id);
         if (training != null) {
-            WorkloadDTO requestWorkloadDTO = new WorkloadDTO(training.getTrainer().getUser().getUsername(),
+            WorkloadDTO workloadDTO = new WorkloadDTO(training.getTrainer().getUser().getUsername(),
                     training.getTrainer().getUser().getFirstName(), training.getTrainer().getUser().getLastName(),
-                    training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration(), ActionType.DELETE);
+                    training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration());
+            MessagePostProcessor messagePostProcessor = message -> {
+                message.setStringProperty("username", workloadDTO.getUserName());
+                message.setStringProperty("actionType", ActionType.DELETE.toString());
+                return message;
+            };
             facade.deleteTraining(id);
-            workloadSummaryClient.manageWorkload(training.getTrainer().getUser().getUsername(), requestWorkloadDTO);
+            sender.sendTrainerWorkloadMessage(queueName, workloadDTO, messagePostProcessor);
         } else {
             throw new DeleteException(id);
         }

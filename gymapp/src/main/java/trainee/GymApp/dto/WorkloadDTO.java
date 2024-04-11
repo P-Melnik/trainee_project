@@ -19,6 +19,5 @@ public class WorkloadDTO {
     private boolean isActive;
     private LocalDate trainingDate;
     private double trainingDuration;
-    private ActionType actionType;
 
 }
