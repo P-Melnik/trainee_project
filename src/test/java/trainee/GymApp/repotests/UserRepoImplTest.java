@@ -60,9 +60,9 @@ public class UserRepoImplTest {
         User user = createUser();
         userRepo.create(user);
 
-        User retrievedUser = userRepo.findByUserName(user.getUserName());
+        User retrievedUser = userRepo.findByUserName(user.getUsername());
         Assertions.assertNotNull(retrievedUser);
-        Assertions.assertEquals(user.getUserName(), retrievedUser.getUserName());
+        Assertions.assertEquals(user.getUsername(), retrievedUser.getUsername());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class UserRepoImplTest {
         userRepo.create(user);
 
         String newPassword = UserUtil.generatePassword();
-        userRepo.changePassword(user.getUserName(), newPassword);
+        userRepo.changePassword(user.getUsername(), newPassword);
         entityManager.refresh(user);
         User updatedUser = userRepo.findById(user.getId());
         Assertions.assertEquals(newPassword, updatedUser.getPassword());
@@ -94,8 +94,8 @@ public class UserRepoImplTest {
         User user = createUser();
         userRepo.create(user);
 
-        Assertions.assertTrue(userRepo.checkPassword(user.getUserName(), user.getPassword()));
-        Assertions.assertFalse(userRepo.checkPassword(user.getUserName(), "wrongPassword"));
+        Assertions.assertTrue(userRepo.checkPassword(user.getUsername(), user.getPassword()));
+        Assertions.assertFalse(userRepo.checkPassword(user.getUsername(), "wrongPassword"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class UserRepoImplTest {
         User user = createUser();
         userRepo.create(user);
 
-        userRepo.changeStatus(user.getUserName());
+        userRepo.changeStatus(user.getUsername());
         entityManager.refresh(user);
         System.out.println(user.isActive());
         Assertions.assertNotEquals(user.isActive(), true);
@@ -111,6 +111,6 @@ public class UserRepoImplTest {
 
     private User createUser() {
         return new User("pavel", "kotov", UserUtil.generateLogin("pavel", "kotov")
-        , UserUtil.generatePassword(), true);
+        , UserUtil.generatePassword());
     }
 }

@@ -43,8 +43,8 @@ public class TrainingServiceImplTest {
 
     @Before
     public void init() {
-        TraineeDTO traineeDTO = new TraineeDTO("a", "b", true, LocalDate.of(1991, 1, 1), "street1");
-        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "c", "d", true);
+        TraineeDTO traineeDTO = new TraineeDTO("a", "b", LocalDate.of(1991, 1, 1), "street1");
+        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "c", "d");
         traineeService.create(traineeDTO);
         trainerService.create(trainerDTO);
     }

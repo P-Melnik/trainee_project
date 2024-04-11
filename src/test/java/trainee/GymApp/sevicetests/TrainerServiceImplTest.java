@@ -28,15 +28,15 @@ public class TrainerServiceImplTest {
 
     @Test
     public void createTraineeAndFindByUsernameTest() {
-        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "a", "b", true);
+        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "a", "b");
         CredentialsDTO credentials = trainerService.create(trainerDTO);
         Trainer trainer = trainerService.findByUserName("a.b");
-        assertEquals(credentials.getUserName(), trainer.getUser().getUserName());
+        assertEquals(credentials.getUserName(), trainer.getUser().getUsername());
     }
 
     @Test
     public void updateTraineeTest() {
-        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "b", "c", true);
+        TrainerDTO trainerDTO = new TrainerDTO(trainingType, "b", "c");
         trainerService.create(trainerDTO);
         Trainer trainer = trainerService.findByUserName("b.c");
         trainer.getUser().setFirstName("upd");

@@ -55,9 +55,9 @@ public class TrainingRepoImplTest {
 
     private Training createSampleTraining() {
         User user = new User("trainee", "ivanov", UserUtil.generateLogin("trainee", "ivanov"),
-                UserUtil.generatePassword(), true);
+                UserUtil.generatePassword());
         User user2 = new User("trainer", "stepanov", UserUtil.generateLogin("trainer", "stepanov"),
-                UserUtil.generatePassword(), true);
+                UserUtil.generatePassword());
         Trainee trainee = new Trainee(LocalDate.of(1991, 9, 9),
                 "street1", user, new HashSet<>());
         Trainer trainer = new Trainer(trainingTypeRepo.getTrainingType("GYM"), user2);

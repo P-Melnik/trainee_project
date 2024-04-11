@@ -3,6 +3,7 @@ package trainee.GymApp.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import trainee.GymApp.dao.TrainerRepo;
 import trainee.GymApp.dao.TrainingTypeRepo;
@@ -40,6 +41,9 @@ public class TrainerServiceImpl implements TrainerService {
     @Autowired
     private TrainingTypeRepo trainingTypeRepo;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
     @Override
     public Trainer getById(long id) {
         log.debug("Fetching trainer:" + id);
@@ -50,17 +54,20 @@ public class TrainerServiceImpl implements TrainerService {
     public CredentialsDTO create(TrainerDTO trainerDTO) {
         log.info("Creating trainer: " + trainerDTO);
         validateTrainer(trainerDTO);
+        String pass = UserUtil.generatePassword();
         TrainingType trainingType = trainingTypeRepo.getTrainingType(trainerDTO.getTrainingType().getTrainingTypeName());
-        User user = new User(trainerDTO.getFirstName(), trainerDTO.getLastName(), UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()), UserUtil.generatePassword(), trainerDTO.isActive());
+        User user = new User(trainerDTO.getFirstName(), trainerDTO.getLastName(),
+                UserUtil.generateLogin(trainerDTO.getFirstName(), trainerDTO.getLastName()),
+                encoder.encode(pass));
         Trainer trainer = new Trainer(trainingType, user);
         trainerRepo.create(trainer);
-        return new CredentialsDTO(trainer.getUser().getUserName(), trainer.getUser().getPassword());
+        return new CredentialsDTO(trainer.getUser().getUsername(), pass);
     }
 
     @Override
     public Trainer update(Trainer trainer) {
         log.info("Updating trainer: " + trainer);
-        return trainerRepo.update(trainer).orElseThrow(() -> new UpdateException(trainer.getUser().getUserName()));
+        return trainerRepo.update(trainer).orElseThrow(() -> new UpdateException(trainer.getUser().getUsername()));
     }
 
     public List<Trainer> findAll() {

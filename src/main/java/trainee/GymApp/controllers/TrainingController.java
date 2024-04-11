@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import trainee.GymApp.facade.Facade;
@@ -21,9 +20,8 @@ public class TrainingController {
     private Facade facade;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> add(@RequestHeader(name = "username") String username, @RequestHeader(name = "password") String password,
-                                          @Valid @RequestBody TrainingDTO trainingDTO) {
-        facade.createTraining(trainingDTO, username, password);
+    public ResponseEntity<HttpStatus> add(@Valid @RequestBody TrainingDTO trainingDTO) {
+        facade.createTraining(trainingDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

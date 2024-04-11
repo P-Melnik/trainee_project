@@ -30,9 +30,9 @@ public class TrainerControllerTest {
     private static final String USERNAME = "Ivan.Petrov";
     private static final String PASSWORD = "pppppppppp";
     private static final TrainingType testTrainingType = new TrainingType(1, "GYM");
-    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD, true));
-    private static final TrainerDTO testTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Petrov", true);
-    private static final TrainerDTO testUpdateTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Ivanov", true);
+    private static final Trainer testTrainer = new Trainer(testTrainingType, new User("Ivan", "Petrov", USERNAME, PASSWORD));
+    private static final TrainerDTO testTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Petrov");
+    private static final TrainerDTO testUpdateTrainerDTO = new TrainerDTO(testTrainingType, "Ivan", "Ivanov");
     private static final CredentialsDTO testCredentials = new CredentialsDTO(USERNAME, PASSWORD);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,7 +55,7 @@ public class TrainerControllerTest {
 
     @Test
     public void testGetTrainer() throws Exception {
-        Mockito.when(this.facade.getTrainerByUserName(USERNAME, PASSWORD)).thenReturn(testTrainer);
+        Mockito.when(this.facade.getTrainerByUserName(USERNAME)).thenReturn(testTrainer);
         mvc.perform(MockMvcRequestBuilders.get("/trainer/{username}", USERNAME)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("password", PASSWORD))
@@ -78,7 +78,7 @@ public class TrainerControllerTest {
 
     @Test
     public void testUpdateTrainer() throws Exception {
-        Mockito.when(this.facade.getTrainerByUserName(USERNAME, PASSWORD)).thenReturn(testTrainer);
+        Mockito.when(this.facade.getTrainerByUserName(USERNAME)).thenReturn(testTrainer);
         mvc.perform(MockMvcRequestBuilders.put("/trainer/{username}", USERNAME)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", MediaType.APPLICATION_JSON)

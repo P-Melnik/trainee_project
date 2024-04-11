@@ -42,12 +42,12 @@ public class TrainerRepoImplTest {
         Trainer trainer = createSampleTrainer();
         trainerRepo.create(trainer);
         User user = new User("trainer2", "lastname2", UserUtil.generateLogin("trainer", "lastname"),
-                UserUtil.generatePassword(), true);
+                UserUtil.generatePassword());
         trainer.setUser(user);
         trainerRepo.update(trainer);
         Trainer updatedTrainer = trainerRepo.findById(trainer.getId());
         Assertions.assertNotNull(updatedTrainer);
-        Assertions.assertEquals(user.getUserName(), updatedTrainer.getUser().getUserName());
+        Assertions.assertEquals(user.getUsername(), updatedTrainer.getUser().getUsername());
     }
 
     @Test
@@ -63,14 +63,14 @@ public class TrainerRepoImplTest {
     public void testFindByUserName() {
         Trainer trainer = createSampleTrainer();
         trainerRepo.create(trainer);
-        Trainer retrievedTrainer = trainerRepo.findByUserName(trainer.getUser().getUserName()).get();
+        Trainer retrievedTrainer = trainerRepo.findByUserName(trainer.getUser().getUsername()).get();
         Assertions.assertNotNull(retrievedTrainer);
-        Assertions.assertEquals(trainer.getUser().getUserName(), retrievedTrainer.getUser().getUserName());
+        Assertions.assertEquals(trainer.getUser().getUsername(), retrievedTrainer.getUser().getUsername());
     }
 
     private Trainer createSampleTrainer() {
         User user = new User("trainer", "lastname", UserUtil.generateLogin("trainer", "lastname"),
-                UserUtil.generatePassword(), true);
+                UserUtil.generatePassword());
         return new Trainer(trainingTypeRepo.getTrainingType("GYM"), user);
     }
 }
