@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,13 +37,8 @@ public class TrainingController {
     @PostMapping
     public ResponseEntity<HttpStatus> add(@Valid @RequestBody TrainingDTO trainingDTO) {
         facade.createTraining(trainingDTO);
-        WorkloadDTO workloadDTO = WorkloadTrainingMapper.map(trainingDTO);
-        MessagePostProcessor messagePostProcessor = message -> {
-            message.setStringProperty("username", workloadDTO.getUserName());
-            message.setStringProperty("actionType", ActionType.ADD.toString());
-            return message;
-        };
-        sender.sendTrainerWorkloadMessage(queueName, workloadDTO, messagePostProcessor);
+        WorkloadDTO workloadDTO = WorkloadTrainingMapper.map(trainingDTO, ActionType.ADD);
+        sender.sendTrainerWorkloadMessage(queueName, workloadDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,14 +48,9 @@ public class TrainingController {
         if (training != null) {
             WorkloadDTO workloadDTO = new WorkloadDTO(training.getTrainer().getUser().getUsername(),
                     training.getTrainer().getUser().getFirstName(), training.getTrainer().getUser().getLastName(),
-                    training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration());
-            MessagePostProcessor messagePostProcessor = message -> {
-                message.setStringProperty("username", workloadDTO.getUserName());
-                message.setStringProperty("actionType", ActionType.DELETE.toString());
-                return message;
-            };
+                    training.getTrainer().getUser().isActive(), training.getTrainingDate(), training.getTrainingDuration(), ActionType.DELETE);
             facade.deleteTraining(id);
-            sender.sendTrainerWorkloadMessage(queueName, workloadDTO, messagePostProcessor);
+            sender.sendTrainerWorkloadMessage(queueName, workloadDTO);
         } else {
             throw new DeleteException(id);
         }
