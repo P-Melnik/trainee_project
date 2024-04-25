@@ -19,10 +19,10 @@ public class CustomRepoImpl implements CustomRepo {
     private final MongoTemplate mongoTemplate;
 
     public static final String USERNAME = "username";
-    public static final String YEARS = "yearsList";
-    public static final String YEARS_YEAR = "yearsList.year";
-    public static final String YEARS_AND_MONTHS = "yearsList.$.monthsList";
-    public static final String MONTH_VALUE = "yearsList.monthList.monthValue";
+    public static final String YEARS = "workload";
+    public static final String YEARS_YEAR = "workload.year";
+    public static final String YEARS_AND_MONTHS = "workload.$.months";
+    public static final String MONTH_VALUE = "workload.months.month";
 
     @Override
     public void createYear(String username, YearData yearData) {
@@ -42,7 +42,7 @@ public class CustomRepoImpl implements CustomRepo {
     public void deleteMonth(String trainingId, int year, int month) {
         var query = new Query(Criteria.where("_id").is(trainingId).and(YEARS_YEAR).is(year)
                 .and(MONTH_VALUE).is(month));
-        var update = new Update().pull(YEARS_AND_MONTHS, new BasicDBObject("monthValue", month));
+        var update = new Update().pull(YEARS_AND_MONTHS, new BasicDBObject("month", month));
         mongoTemplate.updateFirst(query, update, Workload.class);
     }
 
@@ -58,8 +58,8 @@ public class CustomRepoImpl implements CustomRepo {
         var query = new Query(Criteria.where(USERNAME).is(dto.training().getUsername())
                 .and(YEARS_YEAR).is(dto.yearData())
                 .and(MONTH_VALUE).is(dto.monthData()));
-        var update = new Update().set("yearsList.$.monthsList.$[elem].trainingsSummaryDuration", dto.duration())
-                .filterArray(Criteria.where("elem.monthValue").is(dto.monthData()));
+        var update = new Update().set("workload.$.months.$[elem].summaryDuration", dto.duration())
+                .filterArray(Criteria.where("elem.month").is(dto.monthData()));
         mongoTemplate.updateFirst(query, update, Workload.class);
     }
 }

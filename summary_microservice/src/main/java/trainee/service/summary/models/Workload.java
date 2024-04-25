@@ -6,9 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +24,15 @@ public class Workload {
 
     @MongoId
     private String id;
+    @Indexed(unique = true)
+    @NotBlank
     private String username;
+    @NotBlank
     private String firstname;
+    @NotBlank
     private String lastname;
     private boolean isActive;
-    private List<YearData> workload = new ArrayList<>();
+    private List<YearData> workload;
 
     public Workload(String username, String firstname, String lastname, boolean isActive, List<YearData> workload) {
         this.username = username;

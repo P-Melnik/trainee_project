@@ -17,6 +17,6 @@ import java.util.List;
 public class YearData {
 
     private int year;
-    private List<MonthData> months = new ArrayList<>();
+    private List<MonthData> months;
 
 }
