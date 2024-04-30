@@ -176,7 +176,6 @@ public class SummaryServiceImpl implements SummaryService {
                 updateDataDto.monthData.getMonth(), newDuration));
     }
 
-
     private Workload extractWorkload(WorkloadDTO workloadDTO) {
         return new Workload(workloadDTO.getUserName(), workloadDTO.getFirstName(),
                 workloadDTO.getLastName(), workloadDTO.isActive(), List.of(getYearData(workloadDTO)));
