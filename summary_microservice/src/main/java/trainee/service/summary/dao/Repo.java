@@ -1,18 +1,12 @@
 package trainee.service.summary.dao;
 
-import trainee.service.summary.models.WorkloadDTO;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import trainee.service.summary.models.Workload;
 
 import java.util.Optional;
 
-public interface Repo {
+public interface Repo extends MongoRepository<Workload, String> {
 
-    Optional<Workload> findByUserName(String username);
-
-    Optional<Workload> create(String username);
-
-    void add(WorkloadDTO requestWorkloadDTO);
-
-    void delete(WorkloadDTO requestWorkloadDTO);
+    Optional<Workload> findByUsername(String username);
 
 }

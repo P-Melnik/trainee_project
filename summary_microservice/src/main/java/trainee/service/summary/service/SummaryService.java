@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface SummaryService {
 
-    void manage(WorkloadDTO requestWorkloadDTO);
+    void manage(WorkloadDTO workloadDTO);
 
     Optional<Workload> findByUsername(String username);
 
