@@ -19,15 +19,15 @@ Feature: Create Trainee
     And returns second credentials where username in the format firstName.lastName1
 
   Scenario: Create a new trainee with empty first name
-    Given the trainee data with empty first name
+    Given trainee data with empty first name
       | firstName | lastName |
       |           | Ivanov   |
-    When the trainee user sends a POST request with the empty first name
-    Then the trainee response for data with empty first name contains status code 400
+    When trainee user sends a POST request with the empty first name
+    Then trainee response for data with empty first name contains status code 400
 
   Scenario: Create a new trainee with empty last name
-    Given the trainee data with empty last name
+    Given trainee data with empty last name
       | firstName | lastName |
       | Ivan      |          |
-    When the trainee user sends a POST request with the last first name
-    Then the trainee response for data with empty last name contains status code 400
+    When trainee user sends a POST request with the last first name
+    Then trainee response for data with empty last name contains status code 400

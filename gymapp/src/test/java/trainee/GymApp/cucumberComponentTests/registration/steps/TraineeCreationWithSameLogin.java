@@ -45,7 +45,7 @@ public class TraineeCreationWithSameLogin {
 
     @When("user1, user2 send POST request")
     public void sendPostForTraineesWithSameLogin() {
-        String url = "http://localhost:8080/trainee";
+        String url = "http://localhost:8081/trainee";
         responseEntity1 = restTemplate.postForEntity(url, traineeDTO1, CredentialsDTO.class);
         responseEntity2 = restTemplate.postForEntity(url, traineeDTO2, CredentialsDTO.class);
     }

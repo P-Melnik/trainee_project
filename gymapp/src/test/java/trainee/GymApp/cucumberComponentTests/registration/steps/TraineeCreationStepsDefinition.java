@@ -41,7 +41,7 @@ public class TraineeCreationStepsDefinition {
 
     @When("user sends a POST request with correct data")
     public void sendPostRequestCorrectDataToTrainee() {
-        String url = "http://localhost:8080/trainee";
+        String url = "http://localhost:8081/trainee";
         responseEntity = restTemplate.postForEntity(url, traineeDto, CredentialsDTO.class);
     }
 
