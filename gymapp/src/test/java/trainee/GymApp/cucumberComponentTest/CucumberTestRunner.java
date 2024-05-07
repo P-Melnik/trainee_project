@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SuppressWarnings("NewClassNamingConvention")
 @CucumberOptions(features = "classpath:features/",
         glue = {"trainee.GymApp.cucumberComponentTest.steps"},
-        plugin = {"pretty", "html:target/cucumber-reports/reg_trainee_report.html"})
+        plugin = {"pretty", "html:target/cucumber-reports/component"})
 public class CucumberTestRunner {
 
 }
