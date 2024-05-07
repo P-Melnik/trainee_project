@@ -1,4 +1,4 @@
-package trainee.GymApp.cucumberComponentTests.registration.steps;
+package trainee.GymApp.cucumberComponentTest.steps;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
@@ -8,10 +8,12 @@ import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,8 @@ public class TraineeCreationWithSameLogin {
     private TraineeDTO traineeDTO1;
     private TraineeDTO traineeDTO2;
 
-
+    @LocalServerPort
+    private int port;
 
     @Given("trainees data with same firstname and lastname")
     public void createTraineeUsersData(DataTable dataTable) {
@@ -35,8 +38,10 @@ public class TraineeCreationWithSameLogin {
         List<TraineeDTO> dtoList = new ArrayList<>();
         for (Map<String, String> traineeData : traineeDataTableList) {
             dtoList.add(TraineeDTO.builder()
-                    .firstName(traineeData.get("firstname"))
-                    .lastName(traineeData.get("lastname"))
+                    .firstName(traineeData.get("firstName"))
+                    .lastName(traineeData.get("lastName"))
+                    .dateOfBirth(LocalDate.of(1991, 1, 1))
+                    .address("1")
                     .build());
         }
         traineeDTO1 = dtoList.get(0);
@@ -45,7 +50,7 @@ public class TraineeCreationWithSameLogin {
 
     @When("user1, user2 send POST request")
     public void sendPostForTraineesWithSameLogin() {
-        String url = "http://localhost:8081/trainee";
+        String url = "http://localhost:" + port + "/trainee";
         responseEntity1 = restTemplate.postForEntity(url, traineeDTO1, CredentialsDTO.class);
         responseEntity2 = restTemplate.postForEntity(url, traineeDTO2, CredentialsDTO.class);
     }
@@ -59,7 +64,7 @@ public class TraineeCreationWithSameLogin {
 
     @And("returns second credentials where username in the format firstName.lastName1")
     public void returnTrainee2login() {
-        Assertions.assertEquals(String.format("%s.%s", traineeDTO2.getFirstName().toLowerCase(), traineeDTO2.getLastName().toLowerCase()),
+        Assertions.assertEquals(String.format("%s.%s1", traineeDTO2.getFirstName().toLowerCase(), traineeDTO2.getLastName().toLowerCase()),
                 Objects.requireNonNull(responseEntity2.getBody()).getUserName().toLowerCase());
     }
 

@@ -1,4 +1,4 @@
-package trainee.GymApp.cucumberComponentTests.registration.steps;
+package trainee.GymApp.cucumberComponentTest.steps;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
@@ -8,10 +8,12 @@ import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,20 +30,22 @@ public class TraineeCreationStepsDefinition {
     private String firstName;
     private String lastName;
 
+    @LocalServerPort
+    private int port;
 
     @Given("trainee correct data")
     public void createCorrectUserData(DataTable dataTable) {
         List<Map<String, String>> traineeDataTableList = dataTable.asMaps(String.class, String.class);
         for (Map<String, String> traineeData : traineeDataTableList) {
-            firstName = traineeData.get("firstname");
-            lastName = traineeData.get("lastname");
+            firstName = traineeData.get("firstName");
+            lastName = traineeData.get("lastName");
         }
-        traineeDto = TraineeDTO.builder().firstName(firstName).lastName(lastName).build();
+        traineeDto = new TraineeDTO(firstName, lastName, LocalDate.of(1991, 1, 1), "1");
     }
 
     @When("user sends a POST request with correct data")
     public void sendPostRequestCorrectDataToTrainee() {
-        String url = "http://localhost:8081/trainee";
+        String url = "http://localhost:" + port + "/trainee";
         responseEntity = restTemplate.postForEntity(url, traineeDto, CredentialsDTO.class);
     }
 

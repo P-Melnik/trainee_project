@@ -2,7 +2,7 @@ Feature: Create Trainee
 
   Scenario: Create a new trainee successfully
     Given trainee correct data
-      | firstname | lastname |
+      | firstName | lastName |
       | Jack      | Jackson  |
     When user sends a POST request with correct data
     Then response contains status code 201
