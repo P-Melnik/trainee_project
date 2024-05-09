@@ -10,6 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import trainee.GymApp.CucumberUrlConstants.UrlConstants;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.LoginRequest;
 import trainee.GymApp.dto.LoginResponse;
@@ -49,11 +50,13 @@ public class SaveTrainingAndGetReportDefinition {
     private String token;
     private double duration;
 
+    private final int port = 8080;
+
     @Given("create trainee with firstname {string} and lastname {string}")
     public void createTrainee(String firstName, String lastName) {
         TraineeDTO traineeDTO = TraineeDTO.builder().firstName(firstName).lastName(lastName)
                 .dateOfBirth(LocalDate.of(1991, 1, 1)).address("Oak st.").build();
-        String url = "http://localhost:8080/trainee";
+        String url = String.format(UrlConstants.TRAINEE_URL_FORMAT, port);
         ResponseEntity<CredentialsDTO> credentialsDTOResponseEntity = testRestTemplate.postForEntity(url, traineeDTO, CredentialsDTO.class);
         System.out.println(Objects.requireNonNull(credentialsDTOResponseEntity.getBody()).getUserName());
         String traineeUserName = Objects.requireNonNull(credentialsDTOResponseEntity.getBody()).getUserName();
@@ -70,7 +73,7 @@ public class SaveTrainingAndGetReportDefinition {
     public void createTrainer(String firstName, String lastName) {
         TrainerDTO trainerDTO = TrainerDTO.builder().firstName(firstName).lastName(lastName)
                 .trainingType(new TrainingType(1, "GYM")).build();
-        String url = "http://localhost:8080/trainer";
+        String url = String.format(UrlConstants.TRAINER_URL_FORMAT, port);
         ResponseEntity<CredentialsDTO> credentialsDTOResponseEntity = testRestTemplate.postForEntity(url, trainerDTO, CredentialsDTO.class);
         trainerUserName = Objects.requireNonNull(credentialsDTOResponseEntity.getBody()).getUserName();
         passwordTrainer = credentialsDTOResponseEntity.getBody().getPassword();
@@ -86,7 +89,7 @@ public class SaveTrainingAndGetReportDefinition {
     public void loginViaTrainerProfile() {
         LoginRequest loginRequest = LoginRequest.builder().username(trainerUserName)
                 .password(passwordTrainer).build();
-        String url = "http://localhost:8080/login";
+        String url = String.format(UrlConstants.LOGIN_URL_FORMAT, port);
         token = Objects.requireNonNull(testRestTemplate.postForEntity(url, loginRequest, LoginResponse.class).getBody()).getToken();
         userDetails = org.springframework.security.core.userdetails.User.withUsername(trainerUserName)
                 .password(passwordTrainer).build();
@@ -103,7 +106,7 @@ public class SaveTrainingAndGetReportDefinition {
                 .trainingDate(localDate)
                 .trainingDuration(duration)
                 .build();
-        String url = "http://localhost:8080/trainings";
+        String url = String.format(UrlConstants.TRAININGS_URL_FORMAT, port);
         Assertions.assertTrue(jwtService.isTokenValid(token, userDetails));
         httpStatusResponseEntity = testRestTemplate.postForEntity(url, trainingDTO, HttpStatus.class);
     }
@@ -115,7 +118,7 @@ public class SaveTrainingAndGetReportDefinition {
 
     @And("summary service contains a report with training data of {string}")
     public void validateFirstReport(String trainer) {
-        String url = "http://localhost:8080/workload/" + trainer;
+        String url = String.format(UrlConstants.WORKLOAD_URL_FORMAT, port, trainer);
         ResponseEntity<Workload> responseEntity
                 = testRestTemplate.getForEntity(url, Workload.class);
         Workload workload = responseEntity.getBody();
@@ -134,7 +137,7 @@ public class SaveTrainingAndGetReportDefinition {
                 .trainingDate(localDate)
                 .trainingDuration(duration)
                 .build();
-        String url = "http://localhost:8080/trainings";
+        String url = String.format(UrlConstants.TRAININGS_URL_FORMAT, port);
         Assertions.assertTrue(jwtService.isTokenValid(token, userDetails));
         httpStatusResponseEntity = testRestTemplate.postForEntity(url, trainingDTO, HttpStatus.class);
     }
@@ -146,7 +149,7 @@ public class SaveTrainingAndGetReportDefinition {
 
     @And("the report shows a total duration of {int} in april 2024 for {string}")
     public void validateSecondReport(int secondDuration, String trainer) {
-        String url = "http://localhost:8080/workload/" + trainer;
+        String url = String.format(UrlConstants.WORKLOAD_URL_FORMAT, port, trainer);
         ResponseEntity<Workload> responseEntity
                 = testRestTemplate.getForEntity(url, Workload.class);
         Workload workload = responseEntity.getBody();

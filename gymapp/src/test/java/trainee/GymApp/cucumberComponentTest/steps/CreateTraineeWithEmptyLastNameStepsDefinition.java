@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
+import trainee.GymApp.CucumberUrlConstants.UrlConstants;
 import trainee.GymApp.dto.TraineeDTO;
 
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public class CreateTraineeWithEmptyLastNameStepsDefinition {
 
     @When("trainee user sends a POST request with the last first name")
     public void sendPostRequestInvalidData() {
-        String url = "http://localhost:" + port + "/trainee";
+        String url = String.format(UrlConstants.TRAINEE_URL_FORMAT, port);
         responseEntity = testRestTemplate.postForEntity(url, traineeDTO, Void.class);
     }
 

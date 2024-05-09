@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
+import trainee.GymApp.CucumberUrlConstants.UrlConstants;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TrainerDTO;
 import trainee.GymApp.entity.TrainingType;
@@ -49,7 +50,7 @@ public class TrainerCreationWithSameLoginDefinition {
 
     @When("trainers send POST request")
     public void sendPostForTraineesWithSameLogin() {
-        String url = "http://localhost:" + port + "/trainer";
+        String url = String.format(UrlConstants.TRAINER_URL_FORMAT, port);
         responseEntity1 = restTemplate.postForEntity(url, trainerDTO1, CredentialsDTO.class);
         responseEntity2 = restTemplate.postForEntity(url, trainerDTO2, CredentialsDTO.class);
     }

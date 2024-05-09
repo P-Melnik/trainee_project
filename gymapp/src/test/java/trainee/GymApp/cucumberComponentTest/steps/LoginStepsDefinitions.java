@@ -11,6 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import trainee.GymApp.CucumberUrlConstants.UrlConstants;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.LoginRequest;
 import trainee.GymApp.dto.TraineeDTO;
@@ -40,8 +41,8 @@ public class LoginStepsDefinitions {
                 .dateOfBirth(LocalDate.of(1991, 1, 1))
                 .address("Oak st.")
                 .build();
-        String traineeUrl = "http://localhost:" + port + "/trainee";
-        loginUrl = "http://localhost:" + port + "/login";
+        String traineeUrl = String.format(UrlConstants.TRAINEE_URL_FORMAT, port);
+        loginUrl = String.format(UrlConstants.LOGIN_URL_FORMAT, port);
         credResponseEntity = restTemplate.postForEntity(traineeUrl, traineeDto, CredentialsDTO.class);
     }
 

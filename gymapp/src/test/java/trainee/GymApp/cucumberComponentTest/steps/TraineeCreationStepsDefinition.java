@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
+import trainee.GymApp.CucumberUrlConstants.UrlConstants;
 import trainee.GymApp.dto.CredentialsDTO;
 import trainee.GymApp.dto.TraineeDTO;
 
@@ -45,7 +46,7 @@ public class TraineeCreationStepsDefinition {
 
     @When("user sends a POST request with correct data")
     public void sendPostRequestCorrectDataToTrainee() {
-        String url = "http://localhost:" + port + "/trainee";
+        String url = String.format(UrlConstants.TRAINEE_URL_FORMAT, port);
         responseEntity = restTemplate.postForEntity(url, traineeDto, CredentialsDTO.class);
     }
 
