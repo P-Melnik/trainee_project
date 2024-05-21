@@ -11,6 +11,7 @@
 	<groupId>trainee.service</groupId>
 	<artifactId>summary_microservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>summary</name>
 	<description>Summary microservice</description>
 	<properties>
@@ -131,6 +132,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>summary_service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
